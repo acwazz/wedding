@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Church,
   Wine,
@@ -7,6 +7,8 @@ import {
   CakeSlice,
   Music,
   Heart,
+  Menu,
+  X,
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
@@ -36,8 +38,6 @@ export const Route = createFileRoute("/")({
 
 type Attending = "yes" | "no" | "";
 
-const dietaryOptions = ["Vegetariano", "Vegano", "Celiaco"];
-
 function Home() {
   return (
     <>
@@ -55,6 +55,7 @@ function Home() {
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -82,18 +83,16 @@ function Header() {
           to="/"
           className="flex items-center gap-3 font-serif text-xl font-semibold tracking-wide text-foreground"
         >
+          Licia{" "}
           <img
             src={monogramUrl}
-            alt=""
-            aria-hidden="true"
-            className="h-10 w-10"
-            width={40}
-            height={40}
-          />
-          Licia <span className="text-accent">&</span> Emanuele
+            alt="&"
+            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-[calc(1.43em+5.2px)] align-middle"
+          />{" "}
+          Emanuele
         </Link>
         <nav aria-label="Navigazione principale">
-          <ul className="flex items-center gap-8">
+          <ul className="hidden items-center gap-8 md:flex">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
@@ -105,8 +104,45 @@ function Header() {
               </li>
             ))}
           </ul>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? "Chiudi menu" : "Apri menu"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground md:hidden"
+          >
+            {open ? (
+              <X className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <Menu className="h-6 w-6" aria-hidden="true" />
+            )}
+          </button>
         </nav>
       </div>
+      <nav
+        id="mobile-nav"
+        aria-label="Navigazione mobile"
+        className={`absolute inset-x-0 top-full overflow-hidden px-6 pt-2 backdrop-blur-md transition-all duration-300 ease-out md:hidden ${
+          open
+            ? "max-h-64 border-t border-border/50 bg-background/80 pb-4 opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+      >
+        <ul className="flex flex-col">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-3 text-right font-sans text-base font-medium text-foreground/80 transition-colors hover:bg-secondary/40 hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }
@@ -125,12 +161,12 @@ function Hero() {
         height={1080}
         fetchPriority="high"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-primary/30 to-primary/50" />
+      <div className="absolute inset-0 bg-black/25" />
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center text-primary-foreground drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">
         <p className="mb-4 font-sans text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground/95 [text-shadow:0_2px_12px_rgba(0,0,0,0.9)]">
           Siete invitati al nostro matrimonio
         </p>
-        <h1 className="font-serif text-5xl font-medium leading-[1.1] md:text-7xl">
+        <h1 className="font-serif text-5xl font-medium leading-[1.1] [font-variant:small-caps] md:text-7xl">
           Il matrimonio di <span className="block">Licia ed Emanuele</span>
         </h1>
         <p className="mx-auto mt-6 max-w-md font-sans text-lg font-light md:text-xl">
@@ -141,13 +177,13 @@ function Hero() {
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <a
             href="#rsvp"
-            className="inline-flex items-center justify-center rounded-full bg-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold uppercase tracking-wider text-primary shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 hover:shadow-xl"
+            className="inline-flex items-center justify-center rounded-full bg-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold uppercase tracking-wider text-primary drop-shadow-none [text-shadow:none] transition-transform hover:-translate-y-0.5"
           >
             Conferma presenza
           </a>
           <a
             href="#programma"
-            className="inline-flex items-center justify-center rounded-full border border-primary-foreground/40 bg-primary-foreground/10 px-8 py-3.5 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] transition-colors hover:bg-primary-foreground/20"
+            className="inline-flex items-center justify-center rounded-full bg-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold uppercase tracking-wider text-primary drop-shadow-none [text-shadow:none] transition-transform hover:-translate-y-0.5"
           >
             Scopri il programma
           </a>
@@ -383,27 +419,12 @@ function Rsvp() {
     lastName: "",
     attending: "" as Attending,
     guests: 0,
-    dietary: [] as string[],
     notes: "",
   });
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const isAttending = form.attending === "yes";
-
-  const selectedDietary = useMemo(() => new Set(form.dietary), [form.dietary]);
-
-  function handleDietaryChange(option: string, checked: boolean) {
-    setForm((prev) => {
-      const next = new Set(prev.dietary);
-      if (checked) {
-        next.add(option);
-      } else {
-        next.delete(option);
-      }
-      return { ...prev, dietary: Array.from(next) };
-    });
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -417,9 +438,9 @@ function Rsvp() {
       setErrorMsg("Per favore, conferma se parteciperai o meno.");
       return;
     }
-    if (isAttending && form.guests < 0) {
+    if (isAttending && form.guests < 1) {
       setStatus("error");
-      setErrorMsg("Il numero di accompagnatori non può essere negativo.");
+      setErrorMsg("Il numero totale deve essere almeno 1.");
       return;
     }
     setStatus("success");
@@ -432,7 +453,6 @@ function Rsvp() {
       lastName: "",
       attending: "",
       guests: 0,
-      dietary: [],
       notes: "",
     });
     setStatus("idle");
@@ -580,57 +600,28 @@ function Rsvp() {
                 htmlFor="guests"
                 className="block font-sans text-sm font-medium text-foreground"
               >
-                Numero di accompagnatori
+                Saremo in
               </label>
               <input
                 id="guests"
                 type="number"
-                min={0}
+                min={1}
                 max={10}
                 disabled={!isAttending}
                 value={isAttending ? form.guests : 0}
                 onChange={(e) =>
                   setForm((prev) => ({
                     ...prev,
-                    guests: Math.max(0, parseInt(e.target.value || "0", 10)),
+                    guests: Math.max(1, parseInt(e.target.value || "1", 10)),
                   }))
                 }
                 className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               />
               <p className="font-sans text-xs text-muted-foreground">
-                Inserisci 0 se verrai da solo/a.
+                Numero totale di persone, te compreso. Inserisci 1 se verrai da
+                solo/a.
               </p>
             </div>
-
-            <fieldset className="mt-8 space-y-3">
-              <legend className="block font-sans text-sm font-medium text-foreground">
-                Preferenze alimentari
-              </legend>
-              <div className="flex flex-wrap gap-3">
-                {dietaryOptions.map((option) => {
-                  const checked = selectedDietary.has(option);
-                  return (
-                    <label
-                      key={option}
-                      className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-input bg-background px-4 py-2.5 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5"
-                    >
-                      <input
-                        type="checkbox"
-                        value={option}
-                        checked={checked}
-                        onChange={(e) =>
-                          handleDietaryChange(option, e.target.checked)
-                        }
-                        className="h-4 w-4 rounded border-input accent-primary"
-                      />
-                      <span className="font-sans text-sm text-foreground">
-                        {option}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
 
             <div className="mt-8 space-y-2">
               <label
@@ -647,13 +638,13 @@ function Rsvp() {
                   setForm((prev) => ({ ...prev, notes: e.target.value }))
                 }
                 className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
-                placeholder="Facoltativo: segnala eventuali allergie, intolleranze o necessità specifiche"
+                placeholder="Facoltativo, es: Hannibal - intollerante alla carne di maiale"
               />
             </div>
 
             <button
               type="submit"
-              className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-md shadow-primary/20 transition-colors hover:bg-primary/90"
+              className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Invia conferma
             </button>
@@ -669,7 +660,13 @@ function Footer() {
     <footer className="border-t border-border bg-background py-10">
       <div className="mx-auto max-w-5xl px-6 text-center">
         <p className="font-serif text-2xl font-medium text-foreground">
-          Licia <span className="text-accent">&</span> Emanuele
+          Licia{" "}
+          <img
+            src={monogramUrl}
+            alt="&"
+            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-[calc(1.43em+5.2px)] align-middle"
+          />{" "}
+          Emanuele
         </p>
         <p className="mt-2 font-sans text-sm text-muted-foreground">
           Con amore, non vediamo l&apos;ora di celebrare insieme a voi.
