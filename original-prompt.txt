@@ -1,0 +1,6 @@
+Crea un sito web single page per il mio matrimonio.
+La palette colori è la seguente: https://coolors.co/8d6f2d-d1c4a7-0e1618-ffffff-1b555f
+Il sito deve avere le seguenti sezioni, raggiungibili da un menu top sempre visibile (sticky)
+- Hero sul fold quando si atterra nel sito con immagine modificabile con scritta "Il matrimonio di Licia e Manu"
+- Programma della giornata con orari e attività (modalità timeline veticale)
+- Form di contatto per dare le presenze
