@@ -31,6 +31,9 @@ Thumbs.db
 
 # Testing / coverage
 coverage/
+test-results/
+playwright-report/
+blob-report/
 
 # Local memory bank working files
 memory-bank/*.local.md

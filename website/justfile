@@ -1,0 +1,27 @@
+install:
+    bun install
+
+# run dev server
+dev: install
+    bun run dev
+
+# production build
+build: install
+    bun run build
+
+# typecheck + lint (no unit test framework in project yet)
+test: install
+    bun run typecheck
+    bun run lint
+
+# e2e tests via Playwright (first run: bunx playwright install chromium)
+e2e: install
+    bun run test:e2e
+
+# serve production build
+preview: install
+    bun run preview
+
+# format code
+fmt:
+    bun run format

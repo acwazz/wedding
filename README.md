@@ -12,14 +12,15 @@
 Requires [bun](https://bun.sh) (or npm/node — same scripts work).
 
 ```sh
+cd website
 bun install
 bun run dev
 ```
 
-Or use [just](https://github.com/casey/just):
+Or use [just](https://github.com/casey/just) from repo root (monorepo layout, app lives in `website/`):
 
 ```sh
-just dev      # install + dev server
-just build    # install + production build
-just test     # install + typecheck + lint
+just website dev      # install + dev server
+just website build    # install + production build
+just website test     # install + typecheck + lint
 ```
