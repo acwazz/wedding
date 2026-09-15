@@ -13,12 +13,15 @@
 
 - [x] Dep/component cleanup done (before 2026-09-15 verify): react-hook-form, zod, React Query, sonner, shadcn ui kit, components.json removed; lucide-react kept
 - [x] Memory-bank verified against repo (2026-09-15): backend pytest 13/13 (0.36s), website typecheck+lint clean, e2e 8/8 (14s) — all green; stale entries fixed (src/worker.py→src/main.py, test_worker.py→tests/, removed-deps claims)
+- [x] infra/ Pulumi scaffold (2026-09-15): Zone `emanuelelicia.it` (free) + WorkersCustomDomain apex→wedding-website, api.→wedding-backend; SSL auto (Universal SSL + custom-domain certs), no cert resources; `just infra up/preview/destroy`
+- [x] infra/ migrated TS → Python/uv (2026-09-16): `@pulumi/cloudflare` JS stack deleted (index.ts/package.json/bun.lock/node_modules); now `__main__.py` + `pyproject.toml` (`pulumi-cloudflare>=6,<7` → 6.20.0) + `uv.lock`, `Pulumi.yaml` runtime `python` + `toolchain: uv`; args verified against SDK (Zone: account/name/type; WorkersCustomDomain: account_id/zone_id/hostname/service); py_compile + `uv lock --check` green; justfile install recipe dropped (Pulumi's uv toolchain self-installs deps)
 
 ## Working
 (none)
 
 ## TODO / open
-- [ ] RSVP backend deploy: Google OAuth setup + secrets + `just backend deploy` + `VITE_RSVP_ENDPOINT` on site build (steps in backend/README.md)
+- [ ] `just infra up`: install Pulumi CLI, create CF API token (env `CLOUDFLARE_API_TOKEN`), deploy workers first (custom domains require them), then apply; export NS → set at registrar
+- [ ] RSVP backend deploy: Google OAuth setup + secrets + `just backend deploy` + `VITE_RSVP_ENDPOINT=https://api.emanuelelicia.it/rsvp` on site build (steps in backend/README.md)
 - [ ] Deploy website: `VITE_RSVP_ENDPOINT=<backend-url> just website deploy`
 - [ ] Live Google Sheets round-trip test after creds exist (`.dev.vars`)
 - [ ] Dead `ALLOWED_ORIGIN` var in backend wrangler.jsonc — wire into CORS or delete

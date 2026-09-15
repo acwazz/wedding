@@ -10,6 +10,7 @@
 - Bun (bun.lock, bunfig.toml); npm/node also work
 - just 1.58 (command runner, monorepo via `mod`)
 - Playwright 1.63 e2e (`@playwright/test`), Chromium browser in `~/.cache/ms-playwright`
+- Pulumi **Python** in `infra/` (uv toolchain: `runtime: name: python, options: toolchain: uv`; deps in `pyproject.toml` + `uv.lock` — `pulumi-cloudflare>=6,<7`, resolves 6.20.0; SDK arg names snake_case: `account_id`/`zone_id`, `Zone` takes `account`/`name`/`type`). Pulumi CLI manages venv via uv on `pulumi up`. CLI NOT installed yet (install: `curl -fsSL https://get.pulumi.com | sh`, needs ≥3.142 for uv toolchain). Auth: `CLOUDFLARE_API_TOKEN` env (token needs Zone+Workers perms). `just infra up|preview|destroy`
 - Backend: FastAPI on CF Python Workers, uv 0.12.15 + pywrangler (deps in `pyproject.toml` → vendored `python_modules/`), wrangler via `npx --yes` (pywrangler proxies to it — `node_modules/` removed 2026-09-15, restore with `bun install` in backend/; bare npx uses latest wrangler, package.json/bun.lock pin 4.131.2)
 
 ## Commands (just, module-style)

@@ -1,0 +1,8 @@
+name: wedding-infra
+description: Cloudflare config for emanuelelicia.it (zone, Workers custom domains, free plan)
+runtime:
+  name: python
+  options:
+    toolchain: uv
+config:
+  wedding-infra:accountId: "510a7295da847650a0c3966ddc884239"

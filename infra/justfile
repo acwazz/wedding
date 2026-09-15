@@ -1,0 +1,8 @@
+up:
+    pulumi up
+
+preview:
+    pulumi preview
+
+destroy:
+    pulumi destroy

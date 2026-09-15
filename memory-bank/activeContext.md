@@ -1,6 +1,6 @@
 # Active Context
 
-> Last updated: 2026-09-15
+> Last updated: 2026-09-16
 
 ## Current state
 Both components verified **Cloudflare Workers release-ready**; backend migrated
@@ -32,6 +32,12 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
 ```
 
 ## Known gaps / decisions pending
+- **infra/ scaffolded, not applied**: converted TS → **Pulumi Python (uv toolchain)**
+  2026-09-16 (`__main__.py`, `pyproject.toml`/`uv.lock`, pulumi-cloudflare 6.20.0).
+  Pulumi CLI not installed (needs ≥3.142 for `toolchain: uv`), workers not deployed
+  yet (`WorkersCustomDomain` requires existing workers). Domain emanuelelicia.it
+  must be owned at a registrar; zone creation is IaC'd but NS switch is manual.
+  API token needed in env (`CLOUDFLARE_API_TOKEN`).
 - **RSVP backend not deployed** — needs Google OAuth setup (refresh token; steps in
   `backend/README.md`), `wrangler secret put` ×3, `just backend deploy`, then set
   `VITE_RSVP_ENDPOINT` on the website build (`just website deploy`).
@@ -46,7 +52,8 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   was 204 pre-FastAPI. Website unaffected (only preflight + POST used).
 
 ## Next likely steps
-1. Google OAuth setup + secrets + `just backend deploy`
-2. `just website deploy` with `VITE_RSVP_ENDPOINT` set to backend URL
-3. Optional: cleanup unused deps/components
+1. Google OAuth setup + secrets + `just backend deploy` (worker `wedding-backend`)
+2. `just website deploy` (worker `wedding-website`), build with `VITE_RSVP_ENDPOINT=https://api.emanuelelicia.it/rsvp`
+3. `just infra up` — zone + custom domains; then registrar NS switch to exported nameservers
+4. Optional: dead `ALLOWED_ORIGIN` cleanup
 

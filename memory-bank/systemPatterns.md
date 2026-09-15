@@ -1,9 +1,10 @@
 # System Patterns
 
 ## Repo structure (monorepo-ready)
-- Root: `justfile` (mods: `website`, `backend`), `AGENTS.md`, `memory-bank/`, `README.md`, `.gitignore`
+- Root: `justfile` (mods: `website`, `backend`, `infra`), `AGENTS.md`, `memory-bank/`, `README.md`, `.gitignore`
 - `website/`: landing page (src/, public/, configs, own justfile, Playwright e2e)
 - `backend/`: CF Python Worker — RSVP → Google Sheets append (entry `src/main.py`, tests `tests/`)
+- `infra/`: Pulumi **Python** (`pulumi_cloudflare` v6, uv toolchain — entry `__main__.py`, deps `pyproject.toml`/`uv.lock`) — zone `emanuelelicia.it` + Workers custom domains (`wedding-website` → apex, `wedding-backend` → `api.emanuelelicia.it`); free plan; SSL = Universal SSL auto-issued, no cert resources. Workers must exist before `pulumi up` (deploy via `just website/backend deploy` first). Zone created via API → NS switch at registrar is manual.
 - New packages = new top-level folder + one `mod` line in root justfile
 
 ## Backend (backend/, Cloudflare Python Worker + FastAPI)
