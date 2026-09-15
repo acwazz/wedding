@@ -22,6 +22,10 @@ e2e: install
 preview: install
     bun run preview
 
+# deploy to Cloudflare Workers (set VITE_RSVP_ENDPOINT for prod backend URL)
+deploy: install
+    bun run build && bunx wrangler deploy
+
 # format code
 fmt:
     bun run format

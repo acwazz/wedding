@@ -1,0 +1,12 @@
+# run unit tests via uv (pytest, no network)
+test:
+    uv run pytest
+
+# local dev server on :8787 (needs .dev.vars with Google creds);
+# pywrangler vendors deps from pyproject.toml then runs wrangler dev
+dev:
+    uv run pywrangler dev
+
+# vendor deps + deploy to Cloudflare Workers
+deploy:
+    uv run pywrangler deploy

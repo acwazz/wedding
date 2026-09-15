@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local wrangler dev (never commit real values)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REFRESH_TOKEN=

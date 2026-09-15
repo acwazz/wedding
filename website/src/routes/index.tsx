@@ -14,6 +14,9 @@ import {
 import heroUrl from "../assets/hero.png?url";
 import monogramUrl from "../assets/monogram-transparent.png";
 
+const RSVP_ENDPOINT =
+  import.meta.env["VITE_RSVP_ENDPOINT"] || "http://localhost:8787/rsvp";
+
 export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
@@ -39,6 +42,9 @@ export const Route = createFileRoute("/")({
 type Attending = "yes" | "no" | "";
 
 function Home() {
+  useEffect(() => {
+    (window as unknown as Record<string, unknown>)["__appReady"] = true;
+  }, []);
   return (
     <>
       <Header />
@@ -421,12 +427,14 @@ function Rsvp() {
     guests: 0,
     notes: "",
   });
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const isAttending = form.attending === "yes";
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.firstName.trim() || !form.lastName.trim()) {
       setStatus("error");
@@ -443,8 +451,20 @@ function Rsvp() {
       setErrorMsg("Il numero totale deve essere almeno 1.");
       return;
     }
-    setStatus("success");
+    setStatus("submitting");
     setErrorMsg("");
+    try {
+      const res = await fetch(RSVP_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus("success");
+    } catch {
+      setStatus("error");
+      setErrorMsg("Impossibile inviare la conferma. Riprova più tardi.");
+    }
   }
 
   function handleReset() {
@@ -644,9 +664,10 @@ function Rsvp() {
 
             <button
               type="submit"
-              className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+              disabled={status === "submitting"}
+              className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Invia conferma
+              {status === "submitting" ? "Invio in corso…" : "Invia conferma"}
             </button>
           </form>
         )}

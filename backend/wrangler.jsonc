@@ -1,0 +1,14 @@
+{
+  "name": "wedding-backend",
+  "main": "src/main.py",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["python_workers", "python_dedicated_snapshot"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "SPREADSHEET_ID": "1EupJfXYfzT2x_XTN3hlIePJQrpxVOmJGJ59Mq3_Mst0",
+    "SHEET_RANGE": "Foglio1!A:A",
+    "ALLOWED_ORIGIN": "*"
+  }
+}

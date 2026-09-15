@@ -1,7 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+// wait for hydration: fills/clicks before React attaches listeners are lost
+async function open(page: Page) {
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    const w = window as unknown as Record<string, unknown>;
+    return w["__appReady"] === true;
+  });
+}
 
 test("homepage shows couple, date and venue", async ({ page }) => {
-  await page.goto("/");
+  await open(page);
   await expect(page).toHaveTitle("Il matrimonio di Licia ed Emanuele");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "Licia ed Emanuele",
@@ -11,7 +20,7 @@ test("homepage shows couple, date and venue", async ({ page }) => {
 });
 
 test("anchor navigation scrolls to sections", async ({ page }) => {
-  await page.goto("/");
+  await open(page);
   const nav = page.getByRole("navigation", {
     name: "Navigazione principale",
   });
@@ -23,7 +32,7 @@ test("anchor navigation scrolls to sections", async ({ page }) => {
 });
 
 test("program lists all five events", async ({ page }) => {
-  await page.goto("/");
+  await open(page);
   await expect(page.locator("#programma ul li")).toHaveCount(5);
   for (const title of [
     "Cerimonia",
@@ -40,7 +49,7 @@ test("program lists all five events", async ({ page }) => {
 
 test("mobile menu opens and closes", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/");
+  await open(page);
   const menuButton = page.getByRole("button", { name: "menu" });
   await menuButton.click();
   const mobileNav = page.locator("#mobile-nav");
@@ -51,7 +60,7 @@ test("mobile menu opens and closes", async ({ page }) => {
 });
 
 test("RSVP validates required fields", async ({ page }) => {
-  await page.goto("/");
+  await open(page);
   await page.getByRole("button", { name: "Invia conferma" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "Per favore, inserisci nome e cognome.",
@@ -77,7 +86,14 @@ test("RSVP validates required fields", async ({ page }) => {
 });
 
 test("RSVP success flow with guests and reset", async ({ page }) => {
-  await page.goto("/");
+  await page.route("**/rsvp", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"ok":true}',
+    }),
+  );
+  await open(page);
   await page.locator("#firstName").fill("Mario");
   await page.locator("#lastName").fill("Rossi");
   await page.locator('input[name="attending"][value="yes"]').check();
@@ -92,8 +108,26 @@ test("RSVP success flow with guests and reset", async ({ page }) => {
   await expect(page.locator("#firstName")).toHaveValue("");
 });
 
+test("RSVP backend failure shows error", async ({ page }) => {
+  await page.route("**/rsvp", (route) =>
+    route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: '{"error":"x"}',
+    }),
+  );
+  await open(page);
+  await page.locator("#firstName").fill("Mario");
+  await page.locator("#lastName").fill("Rossi");
+  await page.locator('input[name="attending"][value="no"]').check();
+  await page.getByRole("button", { name: "Invia conferma" }).click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Impossibile inviare la conferma. Riprova più tardi.",
+  );
+});
+
 test("declining disables guest count", async ({ page }) => {
-  await page.goto("/");
+  await open(page);
   const guests = page.locator("#guests");
   await expect(guests).toBeDisabled();
   await page.locator('input[name="attending"][value="no"]').check();

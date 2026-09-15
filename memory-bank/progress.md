@@ -1,20 +1,28 @@
 # Progress
 
-## Done (roadmap.md all checked)
+## Done
 - [x] Hero placeholder generated → replaced with user illustration
 - [x] Palette, typography, layout set (Coolors palette applied via Tailwind tokens)
 - [x] Header, Hero, Program (vertical timeline), RSVP form, Footer built
 - [x] Build + visual verification passed
 - [x] Monorepo restructure: app → `website/`, root = AGENTS.md + justfile + memory-bank + README; just modules (`just website <cmd>`); `just website test` green
 - [x] Audit fixes: projectbrief stale date/venue corrected (10 aprile 2027, Villa Grant Roma — source `index.tsx`), package.json renamed `website`, Playwright suite added (7 tests, `just website e2e` green ×3)
+- [x] RSVP backend: `backend/` CF Python Worker → Google Sheets append (refresh-token flow), unit tests green, form wired via `VITE_RSVP_ENDPOINT`, e2e 8 tests (mocked POST) green ×4
+- [x] CF Workers release-readiness verified (2026-09-15): backend entry modernized + `python_workers` flag + live `wrangler dev` smoke green; website wired with `@cloudflare/vite-plugin` + own `wrangler.jsonc`, deploy dry-run (983 KiB) + live workerd SSR (200, full HTML) + e2e 8/8 green
+- [x] Backend migrated to FastAPI on pywrangler (2026-09-15, session 2): `src/worker.py` FastAPI app + `Default(WorkerEntrypoint)`/asgi adapter (official pattern); deps via `pyproject.toml` → `pywrangler sync` → `python_modules/` vendored (365 modules, 8.46 MiB / gzip 2.16 MiB dry-run); tests rewritten as stdlib ASGI harness (TDD red→green); `pywrangler dev` live smoke green (preflight 200, bad JSON 400, valid 502-no-creds); justfile dev/deploy → `uv run pywrangler`; uv 0.12.15 (user-upgraded) + one-line patch to uv's pyodide launcher for Node 26
+
+- [x] Dep/component cleanup done (before 2026-09-15 verify): react-hook-form, zod, React Query, sonner, shadcn ui kit, components.json removed; lucide-react kept
+- [x] Memory-bank verified against repo (2026-09-15): backend pytest 13/13 (0.36s), website typecheck+lint clean, e2e 8/8 (14s) — all green; stale entries fixed (src/worker.py→src/main.py, test_worker.py→tests/, removed-deps claims)
 
 ## Working
 (none)
 
 ## TODO / open
-- [ ] RSVP persistence (server route, storage backend, or external form service)
-- [ ] Deploy
-- [ ] Optional: cleanup unused deps/components
+- [ ] RSVP backend deploy: Google OAuth setup + secrets + `just backend deploy` + `VITE_RSVP_ENDPOINT` on site build (steps in backend/README.md)
+- [ ] Deploy website: `VITE_RSVP_ENDPOINT=<backend-url> just website deploy`
+- [ ] Live Google Sheets round-trip test after creds exist (`.dev.vars`)
+- [ ] Dead `ALLOWED_ORIGIN` var in backend wrangler.jsonc — wire into CORS or delete
+- [ ] pyodide launcher patch may need re-apply if uv reinstalls pyodide dist (cmd in backend/README.md)
 
 ## Decision log
 - Plain controlled form over react-hook-form — fewer moving parts for one form; revisit if validation grows
@@ -22,3 +30,9 @@
 - Italian-only content, no i18n
 - Monorepo via just `mod` (recipe names can't contain `:`, so `just website dev` not `website:dev`)
 - `git mv` for restructure — rename history preserved
+- Backend entry: `Default(WorkerEntrypoint)` class (current runtime requirement; legacy `on_fetch` silently produces "no fetch handler")
+- Backend framework: FastAPI (user request) via official ASGI adapter pattern; deps vendored by pywrangler sync into `python_modules/` — deploy path is `uv run pywrangler deploy` (wrangler alone can't resolve fastapi imports without the vendored tree)
+- Backend validation: reuse plain `validate()` fn with Italian messages inside the FastAPI route instead of pydantic models — keeps API contract (400 + joined messages) and tests intact
+- pyodide launcher: patched uv's pyodide shim (Node ≥24 drops the wasm flag) rather than downgrading Node — one line, re-apply cmd in backend/README.md
+- Website deploy: `@cloudflare/vite-plugin` + `wrangler deploy` (official TanStack Start→Workers path; custom `src/server.ts` entry kept as documented "custom entrypoint")
+- `find_additional_modules` removed from backend wrangler.jsonc after pywrangler migration — `python_modules/` vendor tree must be auto-discovered; `.venv` no longer bundled once vendor tree present
