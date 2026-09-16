@@ -1,3 +1,4 @@
-.pulumi/
 .venv/
 __pycache__/
+.pulumi/**/*.attrs
+.pulumi/**/*.bak*

@@ -1,0 +1,1 @@
+{"version":3,"checkpoint":{"stack":"organization/wedding-infra/dev","latest":{"manifest":{"time":"2026-09-16T10:23:03.303876058+02:00","magic":"f4c363785fe6e060ea3173ca09566b02fa192f48f758de9e30ab212f06cbe6e2","version":"v3.262.0"},"secrets_providers":{"type":"passphrase","state":{"salt":"v1:jWxoYHlJgi0=:v1:EX90rrvb5rox2fqC:2EH07Nw579qJj6f/6TPw1lCyBND7kQ=="}},"metadata":{}}}}

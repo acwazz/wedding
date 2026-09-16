@@ -1,8 +1,14 @@
-up:
-    pulumi up
+# ponytail: fixed passphrase — state holds no secrets; rotate if secrets ever added
+export PULUMI_CONFIG_PASSPHRASE := "local"
 
-preview:
-    pulumi preview
+login:
+    pulumi login file://$PWD
 
-destroy:
-    pulumi destroy
+up: login
+    pulumi up --stack dev
+
+preview: login
+    pulumi preview --stack dev
+
+destroy: login
+    pulumi destroy --stack dev

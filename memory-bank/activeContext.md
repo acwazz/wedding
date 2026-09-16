@@ -57,3 +57,21 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
 3. `just infra up` — zone + custom domains; then registrar NS switch to exported nameservers
 4. Optional: dead `ALLOWED_ORIGIN` cleanup
 
+## CI/CD
+- `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push
+  `{component}-{semver}` (glob `{component}-*`). Infra: uv + Pulumi CLI (latest,
+  ≥3.142 needed for uv toolchain) + `pulumi up --stack dev --yes`. Backend:
+  pytest gate + `uv run pywrangler deploy`. Website: bun install + build
+  (VITE_RSVP_ENDPOINT hardcoded api.emanuelelicia.it) + `bunx wrangler deploy`.
+- **Infra state = Pulumi local (file://) backend, git-backed**: `pulumi login
+  file://$PWD` in `infra/` → state in `infra/.pulumi/` (committed to git;
+  `.attrs`/`.bak` churn gitignored via `infra/.gitignore`). Release-infra
+  commits state back to default branch after `pulumi up` (poor-man's remote
+  backend). No PULUMI_ACCESS_TOKEN needed. Only repo secret: `CLOUDFLARE_API_TOKEN`.
+- `PULUMI_CONFIG_PASSPHRASE=local` hardcoded (justfile export + CI env) —
+  state/config hold no secrets. Rotate if real secrets ever added.
+- Ceiling: concurrent infra releases race on state push (non-ff push fails
+  loudly, rerun). Fine for solo project.
+- `infra/justfile`: `login` recipe + deps on up/preview/destroy, `--stack dev`
+  explicit. Stack `dev` bootstrapped 2026-09-16 (preview diff clean: 4 creates).
+

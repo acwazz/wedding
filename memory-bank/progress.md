@@ -15,9 +15,12 @@
 - [x] Memory-bank verified against repo (2026-09-15): backend pytest 13/13 (0.36s), website typecheck+lint clean, e2e 8/8 (14s) — all green; stale entries fixed (src/worker.py→src/main.py, test_worker.py→tests/, removed-deps claims)
 - [x] infra/ Pulumi scaffold (2026-09-15): Zone `emanuelelicia.it` (free) + WorkersCustomDomain apex→wedding-website, api.→wedding-backend; SSL auto (Universal SSL + custom-domain certs), no cert resources; `just infra up/preview/destroy`
 - [x] infra/ migrated TS → Python/uv (2026-09-16): `@pulumi/cloudflare` JS stack deleted (index.ts/package.json/bun.lock/node_modules); now `__main__.py` + `pyproject.toml` (`pulumi-cloudflare>=6,<7` → 6.20.0) + `uv.lock`, `Pulumi.yaml` runtime `python` + `toolchain: uv`; args verified against SDK (Zone: account/name/type; WorkersCustomDomain: account_id/zone_id/hostname/service); py_compile + `uv lock --check` green; justfile install recipe dropped (Pulumi's uv toolchain self-installs deps)
+- [x] Release pipelines (2026-09-16): `.github/workflows/release-{infra,backend,website}.yml` on tag `{component}-{semver}`; YAML lint green; needs `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets
+- [x] Pulumi state moved to local file:// backend, git-backed (2026-09-16): `pulumi login file://$PWD` (infra/justfile `login` recipe + CI step), state in `infra/.pulumi/` committed (attrs/bak ignored), `PULUMI_CONFIG_PASSPHRASE=local` (no secrets in state), stack `dev` bootstrapped, `just infra preview` green (4 creates), PULUMI_ACCESS_TOKEN dropped from CI
+- [x] Pre-push audit (2026-09-16): secret scan of staged diff + tracked files clean (no cred files tracked; backend creds live in wrangler secrets, main.py reads env only; GHAS scan unavailable — manual grep patterns); full suite green (backend 13/13 0.24s, typecheck+lint clean, e2e 8/8 12.9s); README updated (CI releases section, local-state note replaces stale stack-init line)
 
 ## Working
-(none)
+- [ ] Release pipelines smoke test: push tag `website-0.0.1` (or dry) after `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets set
 
 ## TODO / open
 - [ ] `just infra up`: install Pulumi CLI, create CF API token (env `CLOUDFLARE_API_TOKEN`), deploy workers first (custom domains require them), then apply; export NS → set at registrar
