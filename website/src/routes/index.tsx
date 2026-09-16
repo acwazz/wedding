@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
-import monogramUrl from "../assets/monogram-transparent.png";
+import monogramUrl from "../assets/monogram.png";
 
 const RSVP_ENDPOINT =
   import.meta.env["VITE_RSVP_ENDPOINT"] || "http://localhost:8787/rsvp";
@@ -93,7 +93,7 @@ function Header() {
           <img
             src={monogramUrl}
             alt="&"
-            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-[calc(1.43em+5.2px)] align-middle"
+            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-auto align-middle"
           />{" "}
           Emanuele
         </Link>
@@ -685,7 +685,7 @@ function Footer() {
           <img
             src={monogramUrl}
             alt="&"
-            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-[calc(1.43em+5.2px)] align-middle"
+            className="mx-1 inline-block h-[calc(1.43em+5.2px)] w-auto align-middle"
           />{" "}
           Emanuele
         </p>
