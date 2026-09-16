@@ -11,6 +11,8 @@ import {
   X,
   Copy,
   Check,
+  Minus,
+  Plus,
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
@@ -450,6 +452,74 @@ function InfoUtili() {
   );
 }
 
+function Counter({
+  value,
+  min,
+  max,
+  disabled = false,
+  id,
+  labelId,
+  onValueChange,
+}: {
+  value: number;
+  min: number;
+  max: number;
+  disabled?: boolean;
+  id: string;
+  labelId: string;
+  onValueChange: (value: number) => void;
+}) {
+  const prevRef = useRef(value);
+  const prev = prevRef.current;
+  if (value !== prev) prevRef.current = value;
+  const slide =
+    value >= prev ? "slide-in-from-bottom-2" : "slide-in-from-top-2";
+
+  const buttonClass =
+    "flex h-12 w-12 items-center justify-center rounded-xl border border-input bg-background text-foreground transition-all hover:border-primary/50 hover:bg-primary/5 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:cursor-not-allowed disabled:border-input disabled:bg-muted disabled:text-muted-foreground";
+
+  return (
+    <div
+      role="group"
+      aria-labelledby={labelId}
+      className="flex items-center gap-3"
+    >
+      <button
+        type="button"
+        aria-label="Diminuisci numero di persone"
+        disabled={disabled || value <= min}
+        onClick={() => onValueChange(Math.max(min, value - 1))}
+        className={buttonClass}
+      >
+        <Minus className="h-4 w-4" />
+      </button>
+      <div
+        id={id}
+        aria-live="polite"
+        className={`w-12 text-center font-sans text-xl font-medium tabular-nums ${
+          disabled ? "text-muted-foreground" : "text-foreground"
+        }`}
+      >
+        <span
+          key={value}
+          className={`animate-in fade-in ${slide} duration-200 motion-reduce:animate-none`}
+        >
+          {value}
+        </span>
+      </div>
+      <button
+        type="button"
+        aria-label="Aumenta numero di persone"
+        disabled={disabled || value >= max}
+        onClick={() => onValueChange(Math.min(max, value + 1))}
+        className={buttonClass}
+      >
+        <Plus className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 function Rsvp() {
   const [form, setForm] = useState({
     firstName: "",
@@ -647,26 +717,22 @@ function Rsvp() {
             </fieldset>
 
             <div className="mt-8 space-y-2">
-              <label
-                htmlFor="guests"
+              <span
+                id="guests-label"
                 className="block font-sans text-sm font-medium text-foreground"
               >
                 Saremo in
-              </label>
-              <input
+              </span>
+              <Counter
                 id="guests"
-                type="number"
-                min={1}
+                labelId="guests-label"
+                value={form.guests}
+                min={0}
                 max={15}
                 disabled={!isAttending}
-                value={isAttending ? form.guests : 0}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    guests: parseInt(e.target.value, 10) || 0,
-                  }))
+                onValueChange={(guests) =>
+                  setForm((prev) => ({ ...prev, guests }))
                 }
-                className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               />
               <p className="font-sans text-xs text-muted-foreground">
                 Numero totale di persone, te compreso: da 1 a 15. Inserisci 1 se

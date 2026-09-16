@@ -37,6 +37,13 @@
   2026-09-16 — website-only enforcement, API stays lenient). Released as
   `website-0.2.4`, live-verified (max=15 input + new helper text on
   emanuelelicia.it, HTTP 200).
+- RSVP guests UI (2026-09-16, session 4): number input replaced by `Counter`
+  stepper component (user request, shadcn.io/counter style: minus/number/plus,
+  sliding digit animation via tw-animate-css, no new deps — Framer Motion
+  deliberately not added). Steps 0–15 (buttons disabled at bounds), 1 is never
+  auto-enforced (0 reachable, submit validation "tra 1 e 15" unchanged),
+  whole counter disabled when declining. e2e 9/9, typecheck+lint clean,
+  SSR markup verified.
 
 ## Repo layout
 ```

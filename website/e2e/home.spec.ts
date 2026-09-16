@@ -98,8 +98,10 @@ test("RSVP success flow with guests and reset", async ({ page }) => {
   await page.locator("#lastName").fill("Rossi");
   await page.locator('input[name="attending"][value="yes"]').check();
   const guests = page.locator("#guests");
-  await expect(guests).toBeEnabled();
-  await guests.fill("2");
+  await expect(guests).toHaveText("0");
+  await page.getByRole("button", { name: "Aumenta" }).click();
+  await page.getByRole("button", { name: "Aumenta" }).click();
+  await expect(guests).toHaveText("2");
   await page.getByRole("button", { name: "Invia conferma" }).click();
   await expect(
     page.getByRole("heading", { name: "Grazie per la tua risposta!" }),
@@ -108,7 +110,7 @@ test("RSVP success flow with guests and reset", async ({ page }) => {
   await expect(page.locator("#firstName")).toHaveValue("");
 });
 
-test("RSVP guest count must be between 1 and 15", async ({ page }) => {
+test("RSVP guest counter steps between 0 and 15", async ({ page }) => {
   await page.route("**/rsvp", (route) =>
     route.fulfill({
       status: 200,
@@ -121,20 +123,22 @@ test("RSVP guest count must be between 1 and 15", async ({ page }) => {
   await page.locator("#lastName").fill("Rossi");
   await page.locator('input[name="attending"][value="yes"]').check();
   const guests = page.locator("#guests");
-  await expect(guests).toBeEnabled();
+  const minus = page.getByRole("button", { name: "Diminuisci" });
+  const plus = page.getByRole("button", { name: "Aumenta" });
 
-  await guests.fill("0");
-  await expect(guests).toHaveValue("0");
-  await guests.fill("");
-  await expect(guests).toHaveValue("0");
+  await expect(guests).toHaveText("0");
+  await expect(minus).toBeDisabled();
 
-  await guests.fill("16");
-  await page.getByRole("button", { name: "Invia conferma" }).click();
-  await expect(page.getByRole("alert")).toContainText(
-    "Il numero totale deve essere tra 1 e 15.",
-  );
+  await plus.click();
+  await expect(guests).toHaveText("1");
+  await minus.click();
+  await expect(guests).toHaveText("0");
+  await expect(minus).toBeDisabled();
 
-  await guests.fill("15");
+  for (let i = 0; i < 15; i++) await plus.click();
+  await expect(guests).toHaveText("15");
+  await expect(plus).toBeDisabled();
+
   await page.getByRole("button", { name: "Invia conferma" }).click();
   await expect(
     page.getByRole("heading", { name: "Grazie per la tua risposta!" }),
@@ -159,11 +163,16 @@ test("RSVP backend failure shows error", async ({ page }) => {
   );
 });
 
-test("declining disables guest count", async ({ page }) => {
+test("declining disables guest counter", async ({ page }) => {
   await open(page);
   const guests = page.locator("#guests");
-  await expect(guests).toBeDisabled();
+  const minus = page.getByRole("button", { name: "Diminuisci" });
+  const plus = page.getByRole("button", { name: "Aumenta" });
+  await expect(guests).toHaveText("0");
+  await expect(minus).toBeDisabled();
+  await expect(plus).toBeDisabled();
   await page.locator('input[name="attending"][value="no"]').check();
-  await expect(guests).toBeDisabled();
-  await expect(guests).toHaveValue("0");
+  await expect(minus).toBeDisabled();
+  await expect(plus).toBeDisabled();
+  await expect(guests).toHaveText("0");
 });
