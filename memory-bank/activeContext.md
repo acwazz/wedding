@@ -45,6 +45,15 @@
   whole counter disabled when declining. e2e 9/9, typecheck+lint clean,
   SSR markup verified. Released as `website-0.2.5`, live-verified (counter
   markup on emanuelelicia.it).
+- Card-ready changes (2026-09-16, session 5): RSVP deadline now **15 febbraio
+  2027**; RSVP form **disabled in prod** (`VITE_RSVP_ENABLED="false"` in
+  release-website.yml build env → `RSVP_ENABLED` gate → `<fieldset disabled>`
+  + banner "A breve potrai confermare la tua presenza…" — dev/e2e unaffected,
+  flip the workflow env + retag to re-enable); **`/invito` route** (beforeLoad
+  redirect → `/`, participation cards print that URL — FE redirect, SSR 30x);
+  InfoUtili cards got lucide icon badges (Shirt/Gem/Landmark/MapPin via
+  `InfoIcon`). e2e 12/12 (new disabled spec on 2nd dev server :5174),
+  typecheck+lint clean. Released as `website-0.3.0`.
 
 ## Repo layout
 ```
@@ -85,16 +94,18 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   was 204 pre-FastAPI. Website unaffected (only preflight + POST used).
 
 ## Next likely steps
-(none — stack complete and live; only routine releases via tags. Latest:
-website-0.2.5 = RSVP guest counter stepper; backend guests validation stays
-1–20 per user decision 2026-09-16.)
+- When the couple is ready to receive RSVPs: flip `VITE_RSVP_ENABLED` to
+  `"true"` (or remove it) in `.github/workflows/release-website.yml` and retag
+  `website-*` — the form goes live; deadline shown is 15 febbraio 2027.
+  (Backend stays 1–20 guests per user decision 2026-09-16.)
 
 ## CI/CD
 - `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push
   `{component}-{semver}` (glob `{component}-*`). Infra: uv + Pulumi CLI (latest,
   ≥3.142 needed for uv toolchain) + `pulumi up --stack dev --yes`. Backend:
   pytest gate + `uv run pywrangler deploy`. Website: bun install + build
-  (VITE_RSVP_ENDPOINT hardcoded api.emanuelelicia.it) + `bunx wrangler deploy`.
+  (VITE_RSVP_ENDPOINT hardcoded api.emanuelelicia.it; VITE_RSVP_ENABLED="false"
+  → RSVP form disabled in prod) + `bunx wrangler deploy`.
 - **Infra state = Pulumi local (file://) backend, git-backed**: `pulumi login
   file://$PWD` in `infra/` → state in `infra/.pulumi/` (committed to git;
   `.attrs`/`.bak` churn gitignored via `infra/.gitignore`). Release-infra

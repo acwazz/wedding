@@ -13,6 +13,11 @@ import {
   Check,
   Minus,
   Plus,
+  Shirt,
+  Gem,
+  Landmark,
+  MapPin,
+  type LucideIcon,
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
@@ -20,6 +25,8 @@ import monogramUrl from "../assets/monogram-transparent.png";
 
 const RSVP_ENDPOINT =
   import.meta.env["VITE_RSVP_ENDPOINT"] || "http://localhost:8787/rsvp";
+
+const RSVP_ENABLED = import.meta.env["VITE_RSVP_ENABLED"] !== "false";
 
 const IBAN = "IT27X0306903222100000017877";
 
@@ -354,6 +361,14 @@ function Program() {
 const VILLA_GRANT_LAT = 41.687463;
 const VILLA_GRANT_LON = 12.448046;
 
+function InfoIcon({ icon: Icon }: { icon: LucideIcon }) {
+  return (
+    <div className="card-icon flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <Icon className="h-5 w-5" />
+    </div>
+  );
+}
+
 function InfoUtili() {
   const [ibanCopied, setIbanCopied] = useState(false);
   return (
@@ -373,7 +388,8 @@ function InfoUtili() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <h3 className="font-serif text-2xl font-medium text-foreground">
+            <InfoIcon icon={Shirt} />
+            <h3 className="mt-4 font-serif text-2xl font-medium text-foreground">
               Dress code
             </h3>
             <p className="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
@@ -384,7 +400,8 @@ function InfoUtili() {
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <h3 className="font-serif text-2xl font-medium text-foreground">
+            <InfoIcon icon={Gem} />
+            <h3 className="mt-4 font-serif text-2xl font-medium text-foreground">
               No proposte di matrimonio
             </h3>
             <p className="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
@@ -393,7 +410,8 @@ function InfoUtili() {
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <h3 className="font-serif text-2xl font-medium text-foreground">
+            <InfoIcon icon={Landmark} />
+            <h3 className="mt-4 font-serif text-2xl font-medium text-foreground">
               IBAN
             </h3>
             <div className="mt-3 flex items-center justify-between gap-4">
@@ -421,7 +439,8 @@ function InfoUtili() {
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-card p-8 shadow-sm">
-          <h3 className="font-serif text-2xl font-medium text-foreground">
+          <InfoIcon icon={MapPin} />
+          <h3 className="mt-4 font-serif text-2xl font-medium text-foreground">
             Come raggiungere Villa Grant
           </h3>
           <p className="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
@@ -592,7 +611,7 @@ function Rsvp() {
           </h2>
           <p className="mx-auto mt-4 max-w-lg font-sans font-light leading-relaxed text-muted-foreground">
             Ti aspettiamo! Per aiutarci nell&apos;organizzazione, conferma la
-            tua partecipazione entro il 10 marzo 2027.
+            tua partecipazione entro il 15 febbraio 2027.
           </p>
         </div>
 
@@ -630,142 +649,157 @@ function Rsvp() {
               </div>
             )}
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label
-                  htmlFor="firstName"
-                  className="block font-sans text-sm font-medium text-foreground"
-                >
-                  Nome
-                </label>
-                <input
-                  id="firstName"
-                  type="text"
-                  value={form.firstName}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, firstName: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
-                  placeholder="Il tuo nome"
-                  required
-                />
+            {!RSVP_ENABLED && (
+              <div
+                role="status"
+                className="mb-6 rounded-lg border border-primary/30 bg-primary/10 p-4 font-sans text-sm text-primary"
+              >
+                A breve potrai confermare la tua presenza. Torna a trovarci
+                presto!
               </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="lastName"
-                  className="block font-sans text-sm font-medium text-foreground"
-                >
-                  Cognome
-                </label>
-                <input
-                  id="lastName"
-                  type="text"
-                  value={form.lastName}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, lastName: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
-                  placeholder="Il tuo cognome"
-                  required
-                />
-              </div>
-            </div>
+            )}
 
-            <fieldset className="mt-8 space-y-3">
-              <legend className="block font-sans text-sm font-medium text-foreground">
-                Parteciperai alla celebrazione?
-              </legend>
-              <div className="flex flex-wrap gap-4">
-                <label className="inline-flex cursor-pointer items-center gap-3 rounded-xl border border-input bg-background px-5 py-3 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <fieldset disabled={!RSVP_ENABLED}>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="firstName"
+                    className="block font-sans text-sm font-medium text-foreground"
+                  >
+                    Nome
+                  </label>
                   <input
-                    type="radio"
-                    name="attending"
-                    value="yes"
-                    checked={form.attending === "yes"}
+                    id="firstName"
+                    type="text"
+                    value={form.firstName}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        attending: e.target.value as Attending,
+                        firstName: e.target.value,
                       }))
                     }
-                    className="h-4 w-4 accent-primary"
+                    className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
+                    placeholder="Il tuo nome"
+                    required
                   />
-                  <span className="font-sans text-sm text-foreground">
-                    Sarò presente
-                  </span>
-                </label>
-                <label className="inline-flex cursor-pointer items-center gap-3 rounded-xl border border-input bg-background px-5 py-3 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="lastName"
+                    className="block font-sans text-sm font-medium text-foreground"
+                  >
+                    Cognome
+                  </label>
                   <input
-                    type="radio"
-                    name="attending"
-                    value="no"
-                    checked={form.attending === "no"}
+                    id="lastName"
+                    type="text"
+                    value={form.lastName}
                     onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        attending: e.target.value as Attending,
-                        guests: 0,
-                      }))
+                      setForm((prev) => ({ ...prev, lastName: e.target.value }))
                     }
-                    className="h-4 w-4 accent-primary"
+                    className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
+                    placeholder="Il tuo cognome"
+                    required
                   />
-                  <span className="font-sans text-sm text-foreground">
-                    Non potrò esserci
-                  </span>
-                </label>
+                </div>
               </div>
+
+              <fieldset className="mt-8 space-y-3">
+                <legend className="block font-sans text-sm font-medium text-foreground">
+                  Parteciperai alla celebrazione?
+                </legend>
+                <div className="flex flex-wrap gap-4">
+                  <label className="inline-flex cursor-pointer items-center gap-3 rounded-xl border border-input bg-background px-5 py-3 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                    <input
+                      type="radio"
+                      name="attending"
+                      value="yes"
+                      checked={form.attending === "yes"}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          attending: e.target.value as Attending,
+                        }))
+                      }
+                      className="h-4 w-4 accent-primary"
+                    />
+                    <span className="font-sans text-sm text-foreground">
+                      Sarò presente
+                    </span>
+                  </label>
+                  <label className="inline-flex cursor-pointer items-center gap-3 rounded-xl border border-input bg-background px-5 py-3 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                    <input
+                      type="radio"
+                      name="attending"
+                      value="no"
+                      checked={form.attending === "no"}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          attending: e.target.value as Attending,
+                          guests: 0,
+                        }))
+                      }
+                      className="h-4 w-4 accent-primary"
+                    />
+                    <span className="font-sans text-sm text-foreground">
+                      Non potrò esserci
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div className="mt-8 space-y-2">
+                <span
+                  id="guests-label"
+                  className="block font-sans text-sm font-medium text-foreground"
+                >
+                  Saremo in
+                </span>
+                <Counter
+                  id="guests"
+                  labelId="guests-label"
+                  value={form.guests}
+                  min={0}
+                  max={15}
+                  disabled={!isAttending}
+                  onValueChange={(guests) =>
+                    setForm((prev) => ({ ...prev, guests }))
+                  }
+                />
+                <p className="font-sans text-xs text-muted-foreground">
+                  Numero totale di persone, te compreso: da 1 a 15. Inserisci 1
+                  se verrai da solo/a.
+                </p>
+              </div>
+
+              <div className="mt-8 space-y-2">
+                <label
+                  htmlFor="notes"
+                  className="block font-sans text-sm font-medium text-foreground"
+                >
+                  Intolleranze, allergie o altre esigenze
+                </label>
+                <textarea
+                  id="notes"
+                  rows={4}
+                  value={form.notes}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, notes: e.target.value }))
+                  }
+                  className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
+                  placeholder="Facoltativo, es: Hannibal - intollerante alla carne di maiale"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {status === "submitting" ? "Invio in corso…" : "Invia conferma"}
+              </button>
             </fieldset>
-
-            <div className="mt-8 space-y-2">
-              <span
-                id="guests-label"
-                className="block font-sans text-sm font-medium text-foreground"
-              >
-                Saremo in
-              </span>
-              <Counter
-                id="guests"
-                labelId="guests-label"
-                value={form.guests}
-                min={0}
-                max={15}
-                disabled={!isAttending}
-                onValueChange={(guests) =>
-                  setForm((prev) => ({ ...prev, guests }))
-                }
-              />
-              <p className="font-sans text-xs text-muted-foreground">
-                Numero totale di persone, te compreso: da 1 a 15. Inserisci 1 se
-                verrai da solo/a.
-              </p>
-            </div>
-
-            <div className="mt-8 space-y-2">
-              <label
-                htmlFor="notes"
-                className="block font-sans text-sm font-medium text-foreground"
-              >
-                Intolleranze, allergie o altre esigenze
-              </label>
-              <textarea
-                id="notes"
-                rows={4}
-                value={form.notes}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, notes: e.target.value }))
-                }
-                className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring"
-                placeholder="Facoltativo, es: Hannibal - intollerante alla carne di maiale"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={status === "submitting"}
-              className="mt-10 w-full rounded-full bg-primary px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {status === "submitting" ? "Invio in corso…" : "Invia conferma"}
-            </button>
           </form>
         )}
       </div>

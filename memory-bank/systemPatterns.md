@@ -21,16 +21,17 @@
 - Website wires form via `RSVP_ENDPOINT` = `VITE_RSVP_ENDPOINT` env (default `http://localhost:8787/rsvp`), `submitting` state disables button, network error → alert
 
 ## Architecture (website/)
-- Single page app: `src/routes/index.tsx` contains ALL page sections (Header, Hero, Program, InfoUtili, Rsvp, Footer) as local components, plus the reusable `Counter` stepper (used by Rsvp for guests)
-- File-based routing via TanStack Router (`src/routeTree.gen.ts` generated — don't edit)
+- Single page app: `src/routes/index.tsx` contains ALL page sections (Header, Hero, Program, InfoUtili, Rsvp, Footer) as local components, plus the reusable `Counter` stepper (used by Rsvp for guests) and `InfoIcon` badge (InfoUtili cards)
+- Routes: `/` (index) + `/invito` → `beforeLoad` redirect to `/` (URL printed on participation cards)
+- File-based routing via TanStack Router (`src/routeTree.gen.ts` generated — don't edit; regenerates on dev/build when route files change)
 - `src/routes/__root.tsx` root layout; SEO meta via route `head()` in index.tsx
 - shadcn-style UI kit removed; page uses raw HTML + Tailwind (lucide-react icons kept)
 - Entry: `src/start.ts` → `src/server.ts` (custom fetch-handler entry: wraps `@tanstack/react-start/server-entry`, normalizes h3-swallowed 500s to error page), SSR via TanStack Start + Nitro
 - Workers deploy: `@cloudflare/vite-plugin` first in `vite.config.ts` plugins (`viteEnvironment: { name: "ssr" }`), `wrangler.jsonc` main `./src/server.ts` + `nodejs_compat`; build emits `dist/` + `dist/server/wrangler.json`, `wrangler deploy` auto-uses it. **Build before deploy** — without a fresh dist, wrangler falls back to raw esbuild on src/ and fails on virtual modules
 - Router has `scrollRestoration: true` (`src/router.tsx`) — races native anchor jumps, so e2e asserts hash not scroll for the 2nd anchor click
 
-## E2E tests (website/e2e/home.spec.ts, Playwright)
-- 9 tests: title/hero, anchor nav, program items, mobile menu toggle, RSVP validation, RSVP success+reset (POST mocked, guests via + clicks), RSVP guest counter 0–15 stepper bounds (POST mocked; minus floor at 0, 0↔1 stepping, plus ceiling at 15, submit at 15), backend failure alert (POST mocked), declining disables guest counter
+## E2E tests (website/e2e/, Playwright)
+- 12 tests across 2 projects (config: webServer array — :5173 enabled, :5174 with `VITE_RSVP_ENABLED=false`): title/hero+deadline, anchor nav, program items, mobile menu toggle, RSVP validation, RSVP success+reset (POST mocked, guests via + clicks), RSVP guest counter 0–15 stepper bounds (POST mocked; minus floor at 0, 0↔1 stepping, plus ceiling at 15, submit at 15), backend failure alert (POST mocked), declining disables guest counter, /invito redirect, info-utili icons (`#info-utili .card-icon svg` count 4), disabled-RSVP spec (`e2e/disabled.spec.ts`, disabled project: banner role=status + every control disabled, no alert)
 - webServer: `bun run dev` on port 5173
 - **Hydration race**: `open(page)` helper waits for `window.__appReady` (set by useEffect in Home) — fills/clicks before hydration are silently lost
 - Mobile nav closed state = `max-h-0 opacity-0` (NOT display:none) → assert via class, Playwright sees clipped children as visible
@@ -45,6 +46,6 @@
 - Comments only for complex lines; FIXME for unfixed security issues (per AGENTS.md)
 
 ## Notable choices
-- RSVP form: plain controlled `useState`, manual validation (react-hook-form/zod were removed from deps — never used); guests = `Counter` stepper component (minus/number/plus, shadcn-counter style: lucide Minus/Plus, `tw-animate-css` direction-aware slide on digit change via `key={value}` remount, `aria-live` display, buttons `type="button"` + aria-labels, bounds via disabled at min/max) — stepping range 0–15, submission still validates 1–15 (backend validates server-side too, 1–20)
+- RSVP form: plain controlled `useState`, manual validation (react-hook-form/zod were removed from deps — never used); guests = `Counter` stepper component (minus/number/plus, shadcn-counter style: lucide Minus/Plus, `tw-animate-css` direction-aware slide on digit change via `key={value}` remount, `aria-live` display, buttons `type="button"` + aria-labels, bounds via disabled at min/max) — stepping range 0–15, submission still validates 1–15 (backend validates server-side too, 1–20); prod gate: whole form wrapped in `<fieldset disabled={!RSVP_ENABLED}>` + `role="status"` banner when built with `VITE_RSVP_ENABLED=false` (CI only — dev/e2e default enabled)
 - Timeline: alternating left/right on md+, stacked on mobile
 - Anchor nav (`#programma`, `#rsvp`) with `scroll-mt-24` offset for sticky header

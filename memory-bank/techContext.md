@@ -18,7 +18,7 @@ Root justfile: `mod website "website"`, `mod backend "backend"` — run from rep
 - `just website dev` — install + dev server (port **5173**, not 3000)
 - `just website build` — production build (outputs `website/dist/`)
 - `just website test` — typecheck + lint
-- `just website e2e` — Playwright suite (`website/e2e/`); first run needs `bunx playwright install chromium`
+- `just website e2e` — Playwright suite (`website/e2e/`), 2 projects: 5173 (RSVP enabled) + 5174 (`VITE_RSVP_ENABLED=false`, form-disabled spec); first run needs `bunx playwright install chromium`
 - `just website deploy` — build + `wrangler deploy` to CF Workers (set `VITE_RSVP_ENDPOINT` for prod)
 - `just backend test` — backend unit tests (`uv run pytest`, tests in `backend/tests/`, stdlib ASGI harness in conftest/test_main.py)
 - `just backend dev` — `uv run pywrangler dev` on :8787 (needs `.dev.vars` with Google creds)
@@ -27,6 +27,9 @@ Root justfile: `mod website "website"`, `mod backend "backend"` — run from rep
 - `just website fmt` — prettier
 
 Direct: `cd website && bun run dev|build|lint|format|typecheck`
+Website build env vars: `VITE_RSVP_ENDPOINT` (prod API URL) + `VITE_RSVP_ENABLED`
+(default enabled; CI release build passes `"false"` → RSVP form disabled in
+prod; flip in `release-website.yml` + retag to re-enable)
 Backend deploy check: `cd backend && bunx wrangler deploy --dry-run` (expect ~5 KiB upload; if MiB-sized, module discovery regressed)
 
 ## Config files (all under `website/`)

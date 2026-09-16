@@ -18,6 +18,7 @@ jobs:
       - run: bun run build
         env:
           VITE_RSVP_ENDPOINT: https://api.emanuelelicia.it/rsvp
+          VITE_RSVP_ENABLED: "false"
       - name: deploy
         run: bunx wrangler deploy
         env:

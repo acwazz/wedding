@@ -6,11 +6,30 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env["CI"] ? 2 : 0,
   reporter: process.env["CI"] ? "github" : "list",
-  use: { baseURL: "http://localhost:5173" },
-  webServer: {
-    command: "bun run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env["CI"],
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: "bun run dev",
+      url: "http://localhost:5173",
+      reuseExistingServer: !process.env["CI"],
+      timeout: 120_000,
+    },
+    {
+      command: "VITE_RSVP_ENABLED=false bun run dev --port 5174",
+      url: "http://localhost:5174",
+      reuseExistingServer: !process.env["CI"],
+      timeout: 120_000,
+    },
+  ],
+  projects: [
+    {
+      name: "enabled",
+      use: { baseURL: "http://localhost:5173" },
+      testMatch: /home\.spec\.ts$/,
+    },
+    {
+      name: "disabled",
+      use: { baseURL: "http://localhost:5174" },
+      testMatch: /disabled\.spec\.ts$/,
+    },
+  ],
 });

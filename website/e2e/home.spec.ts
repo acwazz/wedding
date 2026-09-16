@@ -17,6 +17,7 @@ test("homepage shows couple, date and venue", async ({ page }) => {
   );
   await expect(page.getByText("Sabato 10 aprile 2027")).toBeVisible();
   await expect(page.getByText("Villa Grant, Roma")).toBeVisible();
+  await expect(page.getByText("entro il 15 febbraio 2027")).toBeVisible();
 });
 
 test("anchor navigation scrolls to sections", async ({ page }) => {
@@ -161,6 +162,19 @@ test("RSVP backend failure shows error", async ({ page }) => {
   await expect(page.getByRole("alert")).toContainText(
     "Impossibile inviare la conferma. Riprova più tardi.",
   );
+});
+
+test("/invito redirects to the main site", async ({ page }) => {
+  await page.goto("/invito");
+  await expect(page).toHaveURL("http://localhost:5173/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Licia ed Emanuele",
+  );
+});
+
+test("info utili cards each have an icon", async ({ page }) => {
+  await open(page);
+  await expect(page.locator("#info-utili .card-icon svg")).toHaveCount(4);
 });
 
 test("declining disables guest counter", async ({ page }) => {
