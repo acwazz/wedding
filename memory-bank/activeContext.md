@@ -55,6 +55,13 @@
   `InfoIcon`). e2e 12/12 (new disabled spec on 2nd dev server :5174),
   typecheck+lint clean. Released as `website-0.3.0`, live-verified (form
   disabled + banner, deadline text, 4 card icons, `/invito` → HTTP 307 → `/`).
+- Small-screen polish (2026-09-16, session 6): "in arrivo" tape was ~330px
+  wide → **5px horizontal scroll at 320px** — mobile now `text-3xl
+  tracking-[0.2em] px-6 py-3` (desktop unchanged via `md:`); hero h1
+  `text-4xl sm:text-5xl md:text-7xl` (was text-5xl — wrapped raggedly on
+  ≤375px phones). New e2e guards: no-overflow at 320/360/375 + tape-fits-
+  timeline at 320/360 (offsetParent rect check). e2e 14/14, typecheck+lint
+  clean. Released as `website-0.3.1`.
 
 ## Repo layout
 ```

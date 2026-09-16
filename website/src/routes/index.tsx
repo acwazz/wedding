@@ -185,7 +185,7 @@ function Hero() {
         <p className="mb-4 font-sans text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground/95 [text-shadow:0_2px_12px_rgba(0,0,0,0.9)]">
           Siete invitati al nostro matrimonio
         </p>
-        <h1 className="font-serif text-5xl font-medium leading-[1.1] [font-variant:small-caps] md:text-7xl">
+        <h1 className="font-serif text-4xl font-medium leading-[1.1] [font-variant:small-caps] sm:text-5xl md:text-7xl">
           Il matrimonio di <span className="block">Licia ed Emanuele</span>
         </h1>
         <p className="mx-auto mt-6 max-w-md font-sans text-lg font-light md:text-xl">
@@ -344,7 +344,7 @@ function Program() {
           }`}
         >
           <span
-            className={`-rotate-6 rounded-xl border-2 border-dashed border-primary/60 bg-background/80 px-10 py-4 font-serif text-4xl font-medium uppercase tracking-[0.3em] text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] md:text-6xl ${
+            className={`-rotate-6 rounded-xl border-2 border-dashed border-primary/60 bg-background/80 px-6 py-3 font-serif text-3xl font-medium uppercase tracking-[0.2em] text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] md:px-10 md:py-4 md:text-6xl md:tracking-[0.3em] ${
               slapped
                 ? "animate-[tape-slap_0.7s_cubic-bezier(0.2,1.6,0.4,1)_both]"
                 : "opacity-0"

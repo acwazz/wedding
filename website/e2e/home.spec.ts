@@ -60,6 +60,47 @@ test("mobile menu opens and closes", async ({ page }) => {
   await expect(mobileNav).toHaveClass(/max-h-0/);
 });
 
+test("mobile viewports have no horizontal overflow", async ({ page }) => {
+  for (const size of [
+    { width: 320, height: 568 },
+    { width: 360, height: 740 },
+    { width: 375, height: 812 },
+  ]) {
+    await page.setViewportSize(size);
+    await open(page);
+    const overflowPx = await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth,
+    );
+    expect(overflowPx).toBeLessThanOrEqual(0);
+  }
+});
+
+test("program tape fits within the timeline on small viewports", async ({
+  page,
+}) => {
+  for (const size of [
+    { width: 320, height: 568 },
+    { width: 360, height: 740 },
+  ]) {
+    await page.setViewportSize(size);
+    await open(page);
+    const fits = await page.evaluate(() => {
+      const tape = document.querySelector(
+        '#programma div[aria-hidden="true"] > span',
+      );
+      if (!(tape instanceof HTMLElement)) return false;
+      const parent = tape.offsetParent;
+      if (!(parent instanceof HTMLElement)) return false;
+      const t = tape.getBoundingClientRect();
+      const p = parent.getBoundingClientRect();
+      return t.left >= p.left && t.right <= p.right;
+    });
+    expect(fits).toBe(true);
+  }
+});
+
 test("RSVP validates required fields", async ({ page }) => {
   await open(page);
   await page.getByRole("button", { name: "Invia conferma" }).click();
