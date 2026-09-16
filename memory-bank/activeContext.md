@@ -61,7 +61,8 @@
   `text-4xl sm:text-5xl md:text-7xl` (was text-5xl — wrapped raggedly on
   ≤375px phones). New e2e guards: no-overflow at 320/360/375 + tape-fits-
   timeline at 320/360 (offsetParent rect check). e2e 14/14, typecheck+lint
-  clean. Released as `website-0.3.1`.
+  clean. Released as `website-0.3.1`, live-verified (tape + hero classes in
+  prod HTML).
 
 ## Repo layout
 ```
