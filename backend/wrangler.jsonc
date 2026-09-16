@@ -8,7 +8,7 @@
     "enabled": true
   },
   "vars": {
-    "SPREADSHEET_ID": "1EupJfXYfzT2x_XTN3hlQeIJQrpxVOmJGJ59Mq3_Mst0",
+    "SPREADSHEET_ID": "1EupJfXYfzT2x_XTN3hlIePJQrpxVOmJGJ59Mq3_Mst0",
     "SHEET_RANGE": "Foglio1!A:A"
   }
 }
