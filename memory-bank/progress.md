@@ -18,17 +18,18 @@
 - [x] Release pipelines (2026-09-16): `.github/workflows/release-{infra,backend,website}.yml` on tag `{component}-{semver}`; YAML lint green; needs `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets
 - [x] Pulumi state moved to local file:// backend, git-backed (2026-09-16): `pulumi login file://$PWD` (infra/justfile `login` recipe + CI step), state in `infra/.pulumi/` committed (attrs/bak ignored), `PULUMI_CONFIG_PASSPHRASE=local` (no secrets in state), stack `dev` bootstrapped, `just infra preview` green (4 creates), PULUMI_ACCESS_TOKEN dropped from CI
 - [x] Pre-push audit (2026-09-16): secret scan of staged diff + tracked files clean (no cred files tracked; backend creds live in wrangler secrets, main.py reads env only; GHAS scan unavailable — manual grep patterns); full suite green (backend 13/13 0.24s, typecheck+lint clean, e2e 8/8 12.9s); README updated (CI releases section, local-state note replaces stale stack-init line)
+- [x] Full deploy + pipeline fix (2026-09-16): zone import (error 1061 — zone existed), backend re-vendored for py314 (compat_date 2026-09-15 + dedicated snapshot restored + `uv python install cpython-3.14.2…` + `sync --force`; old 3.12 wheels ImportError, old runtime startup 1387ms>1000ms), workers_dev false both, parking A records (apex/api) deleted → custom domains created; workers wedding-backend + wedding-website live; tags infra-0.1.1 / backend-0.1.1 / website-0.1.0 ALL GREEN; registrar NS switch pending
 
 ## Working
 - [ ] Release pipelines smoke test: push tag `website-0.0.1` (or dry) after `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets set
 
 ## TODO / open
-- [ ] `just infra up`: install Pulumi CLI, create CF API token (env `CLOUDFLARE_API_TOKEN`), deploy workers first (custom domains require them), then apply; export NS → set at registrar
-- [ ] RSVP backend deploy: Google OAuth setup + secrets + `just backend deploy` + `VITE_RSVP_ENDPOINT=https://api.emanuelelicia.it/rsvp` on site build (steps in backend/README.md)
-- [ ] Deploy website: `VITE_RSVP_ENDPOINT=<backend-url> just website deploy`
+- [ ] Registrar NS switch → kenia.ns.cloudflare.com + sevki.ns.cloudflare.com (zone `pending` until then)
+- [ ] Google OAuth setup + `wrangler secret put` ×3 + re-deploy backend (RSVP 502 until then; steps in backend/README.md)
 - [ ] Live Google Sheets round-trip test after creds exist (`.dev.vars`)
+- [ ] Optional: clean parking DNS junk (subdomain NS records, www A, MX/TXT/CAA parking artifacts)
 - [ ] Dead `ALLOWED_ORIGIN` var in backend wrangler.jsonc — wire into CORS or delete
-- [ ] pyodide launcher patch may need re-apply if uv reinstalls pyodide dist (cmd in backend/README.md)
+- [ ] pyodide launcher patch may need re-apply if uv reinstalls pyodide dist (cmd in backend/README.md; only for local Node 24+ dev — CI Node 20/22 unaffected)
 
 ## Decision log
 - Plain controlled form over react-hook-form — fewer moving parts for one form; revisit if validation grows
