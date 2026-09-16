@@ -39,8 +39,18 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
 ```
 
 ## Known gaps / decisions pending
-- **RSVP backend live but no Google creds** → 502 on valid RSVP POST until
-  secrets set (unit tests cover auth+append flow with mocks).
+- ~~RSVP backend live but no Google creds~~ **DONE 2026-09-16**: OAuth secrets set
+  (GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN), live round-trip green
+  (`POST /rsvp` → 200 → Sheet row). Whole stack LIVE end-to-end.
+- py3.14 runtime notes: global `fetch` gone → `from workers import fetch`
+  (guarded for tests, tests monkeypatch `main.fetch`); SDK fetch takes
+  kwargs (`fetch(url, method=..., headers=..., body=...)`) not positional
+  init dict — test fakes updated (`**init`). 502 path now logs
+  `rsvp failed: <exc>` to `wrangler tail` (safe: no secrets in messages).
+- OAuth setup gotchas (user hit all): consent screen test user needed;
+  client must be **Web application** with redirect URI
+  `https://developers.google.com/oauthplayground` (NO trailing slash —
+  that's what playground sends; slash variant optional extra).
 - No `.dev.vars` → live Google Sheets round-trip untested; e2e covers the
   website↔backend POST contract via mocks, unit tests cover Google auth+append flow.
 - Unused deps removed (react-hook-form, zod, shadcn ui kit, sonner, React Query all
@@ -52,10 +62,7 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   was 204 pre-FastAPI. Website unaffected (only preflight + POST used).
 
 ## Next likely steps
-1. **Registrar NS switch**: kenia.ns.cloudflare.com + sevki.ns.cloudflare.com → zone active → domains live
-2. Google OAuth setup + `wrangler secret put` ×3 (`just backend deploy` re-deploy after secrets; steps in backend/README.md)
-3. Verify live: `https://emanuelelicia.it` + `https://api.emanuelelicia.it/rsvp` POST
-4. Optional: clean parking DNS junk (subdomain NS records, www A, MX/TXT/CAA)
+(none — stack complete and live; only routine releases via tags)
 
 ## CI/CD
 - `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push

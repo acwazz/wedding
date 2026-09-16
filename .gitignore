@@ -47,3 +47,5 @@ __pycache__/
 .venv-workers/
 python_modules/
 pylock.toml
+
+.secrets*
