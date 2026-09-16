@@ -9,6 +9,8 @@ import {
   Heart,
   Menu,
   X,
+  Copy,
+  Check,
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
@@ -16,6 +18,8 @@ import monogramUrl from "../assets/monogram-transparent.png";
 
 const RSVP_ENDPOINT =
   import.meta.env["VITE_RSVP_ENDPOINT"] || "http://localhost:8787/rsvp";
+
+const IBAN = "IT27X0306903222100000017877";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -349,6 +353,7 @@ const VILLA_GRANT_LAT = 41.687463;
 const VILLA_GRANT_LON = 12.448046;
 
 function InfoUtili() {
+  const [ibanCopied, setIbanCopied] = useState(false);
   return (
     <section
       id="info-utili"
@@ -384,6 +389,32 @@ function InfoUtili() {
               La giornata è dedicata a noi: lasciate a casa l&apos;anello e le
               ginocchia a terra.
             </p>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+            <h3 className="font-serif text-2xl font-medium text-foreground">
+              IBAN
+            </h3>
+            <div className="mt-3 flex items-center justify-between gap-4">
+              <code className="break-all font-mono text-sm text-muted-foreground">
+                {IBAN}
+              </code>
+              <button
+                type="button"
+                aria-label="Copia IBAN"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(IBAN);
+                    setIbanCopied(true);
+                    setTimeout(() => setIbanCopied(false), 2000);
+                  } catch {
+                    setIbanCopied(false);
+                  }
+                }}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {ibanCopied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
           </div>
         </div>
 
