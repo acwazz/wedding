@@ -21,6 +21,7 @@
 - [x] Full deploy + pipeline fix (2026-09-16): zone import (error 1061 — zone existed), backend re-vendored for py314 (compat_date 2026-09-15 + dedicated snapshot restored + `uv python install cpython-3.14.2…` + `sync --force`; old 3.12 wheels ImportError, old runtime startup 1387ms>1000ms), workers_dev false both, parking A records (apex/api) deleted → custom domains created; workers wedding-backend + wedding-website live; tags infra-0.1.1 / backend-0.1.1 / website-0.1.0 ALL GREEN; registrar NS switch pending
 - [x] RSVP end-to-end LIVE (2026-09-16, session 2): zone active (NS switched), Google OAuth secrets set, fixed py3.14 fetch breakage (SDK import + kwargs call style, `rsvp failed:` tail logging), live `POST /rsvp` → 200 → Sheet row; commit ab7c225, tag backend-0.1.2 green. OAuth gotchas recorded in activeContext (playground redirect URI WITHOUT slash, Web application client type)
 - [x] Cleanup (2026-09-16): dead `ALLOWED_ORIGIN` var removed (backend-0.1.3 green); 36 parking DNS records deleted (subdomain NS, www A, MX/TXT/CAA, www NS) — zone now holds only the 2 WorkersCustomDomain AAAA records; apex + api verified 200 after cleanup
+- [x] **0.2.0 milestone released** (2026-09-16): `infra-0.2.0` / `backend-0.2.0` / `website-0.2.0` all green — stack complete, live end-to-end (no component diffs vs prior tags; milestone release records)
 
 ## Working
 - [ ] Release pipelines smoke test: push tag `website-0.0.1` (or dry) after `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets set
