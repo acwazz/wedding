@@ -24,6 +24,7 @@
 - [x] **0.2.0 milestone released** (2026-09-16): `infra-0.2.0` / `backend-0.2.0` / `website-0.2.0` all green — stack complete, live end-to-end (no component diffs vs prior tags; milestone release records)
 - [x] RSVP 404 bug fixed (2026-09-16, backend-0.2.1 green): SPREADSHEET_ID typo in wrangler.jsonc (`hlQeI…` → real sheet `hlIeP…`) — appends had gone to a different/deleted sheet; live POST 200 ×2, form working. NOTE: deleted typo-ID sheet in Drive trash may hold earlier test rows
 - [x] New monogram applied (2026-09-16, website-0.2.1 green): `src/assets/monogram.png` (320×270, RGB white bg) wired into header/footer (import switched from `monogram-transparent.png`, CSS `w-auto` keeps aspect); favicon.ico (48/32/16 multi-size) + `monogram-transparent-192` (white keyed out) + `monogram-white-192` (white silhouette w/ alpha) regenerated via ImageMagick. `monogram-transparent.png` now unused (kept), `monogram-old.png` = user backup
+- [x] Header/footer monogram transparent (website-0.2.2 green): `monogram-transparent.png` regenerated from new art (white keyed, 192×162), import switched to it — no white box over non-white backdrops. favicon + 192 variants unchanged from 0.2.1
 
 ## Working
 - [ ] Release pipelines smoke test: push tag `website-0.0.1` (or dry) after `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets set
