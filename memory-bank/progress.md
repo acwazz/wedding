@@ -22,6 +22,7 @@
 - [x] RSVP end-to-end LIVE (2026-09-16, session 2): zone active (NS switched), Google OAuth secrets set, fixed py3.14 fetch breakage (SDK import + kwargs call style, `rsvp failed:` tail logging), live `POST /rsvp` → 200 → Sheet row; commit ab7c225, tag backend-0.1.2 green. OAuth gotchas recorded in activeContext (playground redirect URI WITHOUT slash, Web application client type)
 - [x] Cleanup (2026-09-16): dead `ALLOWED_ORIGIN` var removed (backend-0.1.3 green); 36 parking DNS records deleted (subdomain NS, www A, MX/TXT/CAA, www NS) — zone now holds only the 2 WorkersCustomDomain AAAA records; apex + api verified 200 after cleanup
 - [x] **0.2.0 milestone released** (2026-09-16): `infra-0.2.0` / `backend-0.2.0` / `website-0.2.0` all green — stack complete, live end-to-end (no component diffs vs prior tags; milestone release records)
+- [x] RSVP 404 bug fixed (2026-09-16, backend-0.2.1 green): SPREADSHEET_ID typo in wrangler.jsonc (`hlQeI…` → real sheet `hlIeP…`) — appends had gone to a different/deleted sheet; live POST 200 ×2, form working. NOTE: deleted typo-ID sheet in Drive trash may hold earlier test rows
 
 ## Working
 - [ ] Release pipelines smoke test: push tag `website-0.0.1` (or dry) after `CLOUDFLARE_API_TOKEN` + `PULUMI_ACCESS_TOKEN` repo secrets set
