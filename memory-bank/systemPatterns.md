@@ -30,7 +30,7 @@
 - Router has `scrollRestoration: true` (`src/router.tsx`) — races native anchor jumps, so e2e asserts hash not scroll for the 2nd anchor click
 
 ## E2E tests (website/e2e/home.spec.ts, Playwright)
-- 8 tests: title/hero, anchor nav, program items, mobile menu toggle, RSVP validation, RSVP success+reset (POST mocked), backend failure alert (POST mocked), declining disables guests
+- 9 tests: title/hero, anchor nav, program items, mobile menu toggle, RSVP validation, RSVP success+reset (POST mocked), RSVP guest range 1–15 (POST mocked; 0/empty NOT auto-snapped to 1, 16 rejected, 15 accepted), backend failure alert (POST mocked), declining disables guests
 - webServer: `bun run dev` on port 5173
 - **Hydration race**: `open(page)` helper waits for `window.__appReady` (set by useEffect in Home) — fills/clicks before hydration are silently lost
 - Mobile nav closed state = `max-h-0 opacity-0` (NOT display:none) → assert via class, Playwright sees clipped children as visible
@@ -45,6 +45,6 @@
 - Comments only for complex lines; FIXME for unfixed security issues (per AGENTS.md)
 
 ## Notable choices
-- RSVP form: plain controlled `useState`, manual validation (react-hook-form/zod were removed from deps — never used)
+- RSVP form: plain controlled `useState`, manual validation (react-hook-form/zod were removed from deps — never used); guests input accepts raw typing (no keystroke clamping — 0/empty allowed mid-entry), range 1–15 enforced only on submit (backend validates server-side too)
 - Timeline: alternating left/right on md+, stacked on mobile
 - Anchor nav (`#programma`, `#rsvp`) with `scroll-mt-24` offset for sticky header

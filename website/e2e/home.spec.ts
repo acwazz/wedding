@@ -81,7 +81,7 @@ test("RSVP validates required fields", async ({ page }) => {
   await page.locator('input[name="attending"][value="yes"]').check();
   await page.getByRole("button", { name: "Invia conferma" }).click();
   await expect(page.getByRole("alert")).toContainText(
-    "Il numero totale deve essere almeno 1.",
+    "Il numero totale deve essere tra 1 e 15.",
   );
 });
 
@@ -106,6 +106,39 @@ test("RSVP success flow with guests and reset", async ({ page }) => {
   ).toBeVisible();
   await page.getByRole("button", { name: "Compila un altro invito" }).click();
   await expect(page.locator("#firstName")).toHaveValue("");
+});
+
+test("RSVP guest count must be between 1 and 15", async ({ page }) => {
+  await page.route("**/rsvp", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"ok":true}',
+    }),
+  );
+  await open(page);
+  await page.locator("#firstName").fill("Mario");
+  await page.locator("#lastName").fill("Rossi");
+  await page.locator('input[name="attending"][value="yes"]').check();
+  const guests = page.locator("#guests");
+  await expect(guests).toBeEnabled();
+
+  await guests.fill("0");
+  await expect(guests).toHaveValue("0");
+  await guests.fill("");
+  await expect(guests).toHaveValue("0");
+
+  await guests.fill("16");
+  await page.getByRole("button", { name: "Invia conferma" }).click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Il numero totale deve essere tra 1 e 15.",
+  );
+
+  await guests.fill("15");
+  await page.getByRole("button", { name: "Invia conferma" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Grazie per la tua risposta!" }),
+  ).toBeVisible();
 });
 
 test("RSVP backend failure shows error", async ({ page }) => {

@@ -477,9 +477,9 @@ function Rsvp() {
       setErrorMsg("Per favore, conferma se parteciperai o meno.");
       return;
     }
-    if (isAttending && form.guests < 1) {
+    if (isAttending && (form.guests < 1 || form.guests > 15)) {
       setStatus("error");
-      setErrorMsg("Il numero totale deve essere almeno 1.");
+      setErrorMsg("Il numero totale deve essere tra 1 e 15.");
       return;
     }
     setStatus("submitting");
@@ -657,20 +657,20 @@ function Rsvp() {
                 id="guests"
                 type="number"
                 min={1}
-                max={10}
+                max={15}
                 disabled={!isAttending}
                 value={isAttending ? form.guests : 0}
                 onChange={(e) =>
                   setForm((prev) => ({
                     ...prev,
-                    guests: Math.max(1, parseInt(e.target.value || "1", 10)),
+                    guests: parseInt(e.target.value, 10) || 0,
                   }))
                 }
                 className="w-full rounded-xl border border-input bg-background px-4 py-3 font-sans text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               />
               <p className="font-sans text-xs text-muted-foreground">
-                Numero totale di persone, te compreso. Inserisci 1 se verrai da
-                solo/a.
+                Numero totale di persone, te compreso: da 1 a 15. Inserisci 1 se
+                verrai da solo/a.
               </p>
             </div>
 

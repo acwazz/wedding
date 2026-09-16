@@ -30,6 +30,11 @@
   backend/README.md) → RSVP POST → 502 until then.
 - 2026-09-15 verify notes below remain valid for dev flow; live `wrangler dev`
   + pywrangler claims were pre-py314 — dev now runs py314 runtime too.
+- RSVP guests field (2026-09-16, session 3): range is now **1–15** and nothing
+  is enforced while typing — onChange keeps raw value (`parseInt||0`, no
+  `Math.max` clamp), validation only on submit ("tra 1 e 15"). e2e 9/9,
+  typecheck+lint clean. **Backend deliberately left at 1–20** (user decision
+  2026-09-16 — website-only enforcement, API stays lenient).
 
 ## Repo layout
 ```
@@ -39,6 +44,14 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
 ```
 
 ## Known gaps / decisions pending
+- OpenCode env (2026-09-16, later session): global plugins `@dietrichgebert/ponytail@4.10.0`
+  and `opencode-caveman` fail to load on every server start (WARN in
+  `~/.local/share/opencode/log/opencode.log`, e.g. ref err_9e3f9a47) — both implement
+  the **V1** plugin API (function/object default export) while the running server is
+  OpenCode **V2** (2.0.3), which requires `Plugin.define({ id, setup })`. Upstream:
+  ponytail issue #863 + PR #864 (V2 support) open, not yet released. Not a wedding-repo
+  issue (config lives in `~/.config/opencode/opencode.jsonc`, key `plugin`). Fix options
+  presented to user; no action taken yet.
 - ~~RSVP backend live but no Google creds~~ **DONE 2026-09-16**: OAuth secrets set
   (GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN), live round-trip green
   (`POST /rsvp` → 200 → Sheet row). Whole stack LIVE end-to-end.
@@ -62,7 +75,9 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   was 204 pre-FastAPI. Website unaffected (only preflight + POST used).
 
 ## Next likely steps
-(none — stack complete and live; only routine releases via tags)
+- Release `website-0.2.4` (tag push → pipeline deploys; form change live only
+  after that). Backend guests validation stays 1–20 per user decision
+  2026-09-16.
 
 ## CI/CD
 - `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push
