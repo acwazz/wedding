@@ -14,11 +14,13 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 try:
-    from workers import WorkerEntrypoint
+    from workers import WorkerEntrypoint, fetch
 except ImportError:  # outside the Workers runtime (local tests)
 
     class WorkerEntrypoint:
         pass
+
+    fetch = None
 
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 SHEETS_API = "https://sheets.googleapis.com/v4/spreadsheets"
@@ -96,11 +98,9 @@ async def get_access_token(fetch, client_id, client_secret, refresh_token):
     )
     resp = await fetch(
         TOKEN_URL,
-        {
-            "method": "POST",
-            "headers": {"Content-Type": "application/x-www-form-urlencoded"},
-            "body": body,
-        },
+        method="POST",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        body=body,
     )
     payload = await resp.json()
     token = payload.get("access_token")
@@ -127,14 +127,12 @@ async def append_row(fetch, env, row):
     )
     resp = await fetch(
         url,
-        {
-            "method": "POST",
-            "headers": {
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-            },
-            "body": json.dumps({"values": [row]}),
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
         },
+        body=json.dumps({"values": [row]}),
     )
     if resp.status >= 400:
         detail = await resp.text()
@@ -154,7 +152,8 @@ async def rsvp(request: Request):
         return JSONResponse({"error": " ".join(errors)}, status_code=400)
     try:
         await append_row(fetch, request.scope["env"], build_row(data))
-    except Exception:
+    except Exception as exc:
+        print(f"rsvp failed: {exc}")
         return JSONResponse({"error": "invio non riuscito"}, status_code=502)
     return JSONResponse({"ok": True})
 

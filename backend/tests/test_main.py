@@ -32,7 +32,7 @@ class FakeResponse:
 
 
 def make_fetch(calls, token_status=200, sheet_status=200):
-    async def fetch(url, init):
+    async def fetch(url, **init):
         calls.append({"url": url, **init})
         if "oauth2.googleapis.com/token" in url:
             if token_status != 200:
