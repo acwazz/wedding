@@ -53,7 +53,8 @@
   redirect → `/`, participation cards print that URL — FE redirect, SSR 30x);
   InfoUtili cards got lucide icon badges (Shirt/Gem/Landmark/MapPin via
   `InfoIcon`). e2e 12/12 (new disabled spec on 2nd dev server :5174),
-  typecheck+lint clean. Released as `website-0.3.0`.
+  typecheck+lint clean. Released as `website-0.3.0`, live-verified (form
+  disabled + banner, deadline text, 4 card icons, `/invito` → HTTP 307 → `/`).
 
 ## Repo layout
 ```
