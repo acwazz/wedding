@@ -43,7 +43,8 @@
   deliberately not added). Steps 0–15 (buttons disabled at bounds), 1 is never
   auto-enforced (0 reachable, submit validation "tra 1 e 15" unchanged),
   whole counter disabled when declining. e2e 9/9, typecheck+lint clean,
-  SSR markup verified.
+  SSR markup verified. Released as `website-0.2.5`, live-verified (counter
+  markup on emanuelelicia.it).
 
 ## Repo layout
 ```
@@ -85,8 +86,8 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
 
 ## Next likely steps
 (none — stack complete and live; only routine releases via tags. Latest:
-website-0.2.4 = RSVP guests 1–15; backend guests validation stays 1–20 per
-user decision 2026-09-16.)
+website-0.2.5 = RSVP guest counter stepper; backend guests validation stays
+1–20 per user decision 2026-09-16.)
 
 ## CI/CD
 - `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push
