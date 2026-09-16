@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import heroUrl from "../assets/hero.png?url";
-import monogramUrl from "../assets/monogram.png";
+import monogramUrl from "../assets/monogram-transparent.png";
 
 const RSVP_ENDPOINT =
   import.meta.env["VITE_RSVP_ENDPOINT"] || "http://localhost:8787/rsvp";
