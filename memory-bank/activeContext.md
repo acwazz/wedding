@@ -34,7 +34,9 @@
   is enforced while typing — onChange keeps raw value (`parseInt||0`, no
   `Math.max` clamp), validation only on submit ("tra 1 e 15"). e2e 9/9,
   typecheck+lint clean. **Backend deliberately left at 1–20** (user decision
-  2026-09-16 — website-only enforcement, API stays lenient).
+  2026-09-16 — website-only enforcement, API stays lenient). Released as
+  `website-0.2.4`, live-verified (max=15 input + new helper text on
+  emanuelelicia.it, HTTP 200).
 
 ## Repo layout
 ```
@@ -75,9 +77,9 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   was 204 pre-FastAPI. Website unaffected (only preflight + POST used).
 
 ## Next likely steps
-- Release `website-0.2.4` (tag push → pipeline deploys; form change live only
-  after that). Backend guests validation stays 1–20 per user decision
-  2026-09-16.
+(none — stack complete and live; only routine releases via tags. Latest:
+website-0.2.4 = RSVP guests 1–15; backend guests validation stays 1–20 per
+user decision 2026-09-16.)
 
 ## CI/CD
 - `.github/workflows/release-{infra,backend,website}.yml`: deploy on tag push
