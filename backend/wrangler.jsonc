@@ -1,8 +1,9 @@
 {
   "name": "wedding-backend",
   "main": "src/main.py",
-  "compatibility_date": "2025-09-01",
+  "compatibility_date": "2026-09-15",
   "compatibility_flags": ["python_workers", "python_dedicated_snapshot"],
+  "workers_dev": false,
   "observability": {
     "enabled": true
   },
