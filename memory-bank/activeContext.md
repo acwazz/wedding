@@ -3,6 +3,17 @@
 > Last updated: 2026-09-17
 
 ## Current state
+- **App.tsx reorganized into sections/ + components/ (2026-09-17, session 9)**:
+  the 822-line `website/src/App.tsx` was split — pure refactor, zero behavior
+  change, code moved verbatim. New layout: `src/sections/` (Header, Hero,
+  Program, InfoUtili, Rsvp, Footer — one file each, each owning its section
+  data: `navLinks`, `schedule`, `IBAN`/Villa Grant coords, `RSVP_*` env gates)
+  + `src/components/` (Counter stepper, InfoIcon badge) + `App.tsx` = 35-line
+  composition root (`__appReady` onMount kept there). Cross-folder imports
+  via the `@/` alias (tsconfig `paths` + vite `resolve.tsconfigPaths` were
+  already configured but unused until now). Verified: typecheck+lint clean,
+  e2e **15/15**, vite build OK (19.27 kB gzip, unchanged). Unreleased —
+  ships with the next `website-*` tag.
 - **InfoUtili card headers restyled (2026-09-17, session 8)**: icons now sit
   **left of each card title** (icon badge + h3 in `flex items-center gap-4`
   row, `mt-4` dropped from h3, badge got `shrink-0`) in all 4 cards — TDD,
