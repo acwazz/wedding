@@ -8,7 +8,8 @@
   row, `mt-4` dropped from h3, badge got `shrink-0`) in all 4 cards — TDD,
   new e2e `info utili icons sit left of the card titles` (geometric check:
   icon right ≤ title left + vertical overlap) red→green, suite **15/15**,
-  mobile overflow guards still green, typecheck+lint clean. Not yet released.
+  mobile overflow guards still green, typecheck+lint clean. Released with the
+  migration as `website-0.4.0`, live-verified.
 - **Website migrated React → SolidJS + lefthook pre-commit added (2026-09-17,
   session 7)**: TanStack Start/React SSR → **SolidJS 1.9 SPA**, client-rendered
   and served as **Workers static assets** (assets-only `wrangler.jsonc` +
@@ -23,8 +24,10 @@
   failed) + stale `.wrangler/deploy/config.json` SSR redirect (deleted, local
   cache). Full suite green: typecheck+lint, build, e2e 14/14 (specs unchanged,
   framework-agnostic), pytest 13/13, infra check, `lefthook run pre-commit
-  --all-files` 3/3. **Not yet deployed** — release = tag `website-0.4.0` (or
-  similar) once reviewed.
+  --all-files` 3/3. Released with the InfoUtili icon change as
+  **`website-0.4.0`** — pipeline green (run 35198732552, 2026-09-17),
+  live-verified (apex 200, `/invito` → 307, bundle = new Solid SPA:
+  `card-icon`/`shrink-0` + RSVP-disabled banner present, no React/TanStack).
 **ALL THREE PIPELINES GREEN (2026-09-16)** — workers + infra deployed live:
 `infra-0.1.1`, `backend-0.1.1`, `website-0.1.0` tags all `completed success`.
 
