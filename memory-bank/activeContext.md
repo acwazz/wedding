@@ -3,6 +3,12 @@
 > Last updated: 2026-09-17
 
 ## Current state
+- **InfoUtili card headers restyled (2026-09-17, session 8)**: icons now sit
+  **left of each card title** (icon badge + h3 in `flex items-center gap-4`
+  row, `mt-4` dropped from h3, badge got `shrink-0`) in all 4 cards — TDD,
+  new e2e `info utili icons sit left of the card titles` (geometric check:
+  icon right ≤ title left + vertical overlap) red→green, suite **15/15**,
+  mobile overflow guards still green, typecheck+lint clean. Not yet released.
 - **Website migrated React → SolidJS + lefthook pre-commit added (2026-09-17,
   session 7)**: TanStack Start/React SSR → **SolidJS 1.9 SPA**, client-rendered
   and served as **Workers static assets** (assets-only `wrangler.jsonc` +
