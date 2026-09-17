@@ -5,7 +5,7 @@ Wedding landing page + RSVP backend, deployed on Cloudflare Workers.
 ## Layout
 
 ```
-website/   → landing page (TanStack Start + React + Tailwind)
+website/   → landing page (SolidJS SPA + Tailwind, served as Workers static assets)
 backend/   → RSVP API (FastAPI on CF Python Workers → Google Sheets)
 infra/     → Cloudflare zone + custom domains (Pulumi, Python/uv)
 ```
@@ -16,6 +16,7 @@ Requires [bun](https://bun.sh) (website) and [uv](https://docs.astral.sh/uv/) (b
 Run everything through [just](https://github.com/casey/just) from repo root:
 
 ```sh
+just install          # once after cloning: installs lefthook git hooks
 just website dev      # install + dev server (port 5173)
 just website build    # install + production build
 just website test     # install + typecheck + lint
@@ -25,9 +26,17 @@ just backend dev      # pywrangler dev on :8787 (needs .dev.vars with Google cre
 just backend test     # pytest unit tests
 just backend deploy   # vendor deps + deploy worker
 
+just infra check      # uv lock check + entry syntax (no pulumi login)
 just infra preview    # pulumi preview
 just infra up         # pulumi up (zone + custom domains)
 ```
+
+## Git hooks (lefthook)
+
+Pre-commit runs per-component validation, only for the components you touched
+(config in `lefthook.yml`): website → typecheck + lint, backend → pytest,
+infra → lock check + py_compile. Run `bun install` at the repo root once after
+cloning to activate the hooks.
 
 ## Deploy order
 

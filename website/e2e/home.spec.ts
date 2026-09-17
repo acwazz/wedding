@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// wait for hydration: fills/clicks before React attaches listeners are lost
+// wait for app mount: fills/clicks before Solid attaches listeners are lost
 async function open(page: Page) {
   await page.goto("/");
   await page.waitForFunction(() => {
@@ -27,7 +27,7 @@ test("anchor navigation scrolls to sections", async ({ page }) => {
   });
   await nav.getByRole("link", { name: "Programma" }).click();
   await expect(page.locator("#programma")).toBeInViewport();
-  // scrollRestoration races the native anchor jump on the 2nd click, so assert hash
+  // native anchors: the 2nd click is asserted via hash (stable regardless of scroll)
   await nav.getByRole("link", { name: "RSVP" }).click();
   await expect(page).toHaveURL(/#rsvp$/);
 });

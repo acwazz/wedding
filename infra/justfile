@@ -1,6 +1,11 @@
 # ponytail: fixed passphrase — state holds no secrets; rotate if secrets ever added
 export PULUMI_CONFIG_PASSPHRASE := "local"
 
+# static validation (lock freshness + entry syntax) — no pulumi login needed
+check:
+    uv lock --check
+    uv run python -m py_compile __main__.py
+
 login:
     pulumi login file://$PWD
 

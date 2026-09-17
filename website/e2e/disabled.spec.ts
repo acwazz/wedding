@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// wait for hydration: fills/clicks before React attaches listeners are lost
+// wait for app mount: fills/clicks before Solid attaches listeners are lost
 async function open(page: Page) {
   await page.goto("/");
   await page.waitForFunction(() => {

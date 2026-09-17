@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: website
+      glob: "website/**"
+      run: just website test
+    - name: backend
+      glob: "backend/**"
+      run: just backend test
+    - name: infra
+      glob: "infra/**"
+      run: just infra check
