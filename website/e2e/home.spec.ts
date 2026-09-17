@@ -218,6 +218,21 @@ test("info utili cards each have an icon", async ({ page }) => {
   await expect(page.locator("#info-utili .card-icon svg")).toHaveCount(4);
 });
 
+test("info utili icons sit left of the card titles", async ({ page }) => {
+  await open(page);
+  const iconsLeftOfTitles = await page.evaluate(() => {
+    const icons = document.querySelectorAll("#info-utili .card-icon");
+    return Array.from(icons).every((icon) => {
+      const title = icon.parentElement?.querySelector("h3");
+      if (!title) return false;
+      const i = icon.getBoundingClientRect();
+      const t = title.getBoundingClientRect();
+      return i.right <= t.left && i.top < t.bottom && i.bottom > t.top;
+    });
+  });
+  expect(iconsLeftOfTitles).toBe(true);
+});
+
 test("declining disables guest counter", async ({ page }) => {
   await open(page);
   const guests = page.locator("#guests");

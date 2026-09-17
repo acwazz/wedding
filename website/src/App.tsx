@@ -341,7 +341,7 @@ const VILLA_GRANT_LON = 12.448046;
 
 function InfoIcon(props: { icon: LucideIcon }) {
   return (
-    <div class="card-icon flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+    <div class="card-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
       <Dynamic component={props.icon} class="h-5 w-5" />
     </div>
   );
@@ -367,10 +367,12 @@ function InfoUtili() {
 
         <div class="grid gap-6 md:grid-cols-2">
           <div class="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <InfoIcon icon={Shirt} />
-            <h3 class="mt-4 font-serif text-2xl font-medium text-foreground">
-              Dress code
-            </h3>
+            <div class="flex items-center gap-4">
+              <InfoIcon icon={Shirt} />
+              <h3 class="font-serif text-2xl font-medium text-foreground">
+                Dress code
+              </h3>
+            </div>
             <p class="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
               Abbiamo deciso di non scegliere una palette precisa, vogliamo che
               vi sentiate belli ed eleganti. Ma abbiamo un paio di richieste:
@@ -379,20 +381,24 @@ function InfoUtili() {
             </p>
           </div>
           <div class="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <InfoIcon icon={Gem} />
-            <h3 class="mt-4 font-serif text-2xl font-medium text-foreground">
-              No proposte di matrimonio
-            </h3>
+            <div class="flex items-center gap-4">
+              <InfoIcon icon={Gem} />
+              <h3 class="font-serif text-2xl font-medium text-foreground">
+                No proposte di matrimonio
+              </h3>
+            </div>
             <p class="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
               La giornata è dedicata a noi: lasciate a casa l&apos;anello e le
               ginocchia a terra.
             </p>
           </div>
           <div class="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <InfoIcon icon={Landmark} />
-            <h3 class="mt-4 font-serif text-2xl font-medium text-foreground">
-              IBAN
-            </h3>
+            <div class="flex items-center gap-4">
+              <InfoIcon icon={Landmark} />
+              <h3 class="font-serif text-2xl font-medium text-foreground">
+                IBAN
+              </h3>
+            </div>
             <div class="mt-3 flex items-center justify-between gap-4">
               <code class="break-all font-mono text-sm text-muted-foreground">
                 {IBAN}
@@ -421,10 +427,12 @@ function InfoUtili() {
         </div>
 
         <div class="mt-6 rounded-2xl border border-border bg-card p-8 shadow-sm">
-          <InfoIcon icon={MapPin} />
-          <h3 class="mt-4 font-serif text-2xl font-medium text-foreground">
-            Come raggiungere Villa Grant
-          </h3>
+          <div class="flex items-center gap-4">
+            <InfoIcon icon={MapPin} />
+            <h3 class="font-serif text-2xl font-medium text-foreground">
+              Come raggiungere Villa Grant
+            </h3>
+          </div>
           <p class="mt-3 font-sans font-light leading-relaxed text-muted-foreground">
             Villa Grant — Via di Pratica 281, Roma. Dal GRA prendi l&apos;uscita
             26 (SS148 Pontina) direzione Pomezia/Latina, poi l&apos;uscita
