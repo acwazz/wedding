@@ -1,14 +1,13 @@
 # Tech Context
 
 ## Stack
-- TanStack Start 1.168 + TanStack Router 1.170 (file-based routes)
-- React 19, TypeScript 5.8
-- Vite 8, Nitro (dev dep, SSR server)
-- `@cloudflare/vite-plugin` 1.54.9 + `wrangler` 4.131.2 (dev deps, website) — Workers deploy path
+- **SolidJS 1.9** SPA (migrated from TanStack Start + React 2026-09-16) — `vite-plugin-solid` 2.11, no router (single page), no SSR: served as **Workers static assets** (`wrangler.jsonc` assets-only + `public/_redirects` for /invito 307)
+- lucide-solid icons — **deep imports only** (`lucide-solid/icons/<kebab>`): the barrel import serves ~1500 un-prebundled modules in dev (vite-plugin-solid excludes `solid`-condition pkgs from optimizeDeps) → e2e timeouts
 - Tailwind CSS v4 (`@tailwindcss/vite`), tw-animate-css
-- lucide-react icons (shadcn/ui boilerplate, react-hook-form, zod, sonner removed from deps)
+- TypeScript 5.8 (`jsx: "preserve"`, `jsxImportSource: solid-js`)
 - Bun (bun.lock, bunfig.toml); npm/node also work
 - just 1.58 (command runner, monorepo via `mod`)
+- **lefthook 2.1** git hooks (root `package.json` devDep + postinstall → `lefthook install`; config `lefthook.yml` — NOTE: lefthook 2.x prefers the non-dotted name; a stray example `lefthook.yml` gets auto-created if the dotted name is used)
 - Playwright 1.63 e2e (`@playwright/test`), Chromium browser in `~/.cache/ms-playwright`
 - Pulumi **Python** in `infra/` (uv toolchain: `runtime: name: python, options: toolchain: uv`; deps in `pyproject.toml` + `uv.lock` — `pulumi-cloudflare>=6,<7`, resolves 6.20.0; SDK arg names snake_case: `account_id`/`zone_id`, `Zone` takes `account`/`name`/`type`). Pulumi CLI manages venv via uv on `pulumi up`. CLI NOT installed yet (install: `curl -fsSL https://get.pulumi.com | sh`, needs ≥3.142 for uv toolchain). Auth: `CLOUDFLARE_API_TOKEN` env (token needs Zone+Workers perms). `just infra up|preview|destroy`
 - Backend: FastAPI on CF Python Workers, uv 0.12.15 + pywrangler (deps in `pyproject.toml` → vendored `python_modules/`), wrangler via `npx --yes` (pywrangler proxies to it — `node_modules/` removed 2026-09-15, restore with `bun install` in backend/; bare npx uses latest wrangler, package.json/bun.lock pin 4.131.2)
@@ -30,11 +29,12 @@ Direct: `cd website && bun run dev|build|lint|format|typecheck`
 Website build env vars: `VITE_RSVP_ENDPOINT` (prod API URL) + `VITE_RSVP_ENABLED`
 (default enabled; CI release build passes `"false"` → RSVP form disabled in
 prod; flip in `release-website.yml` + retag to re-enable)
+Root: `bun install` (once per clone) installs lefthook + git hooks; also
+`just infra check` = `uv lock --check` + `py_compile __main__.py`
 Backend deploy check: `cd backend && bunx wrangler deploy --dry-run` (expect ~5 KiB upload; if MiB-sized, module discovery regressed)
 
 ## Config files (all under `website/`)
-- `eslint.config.js`, `tsconfig.json` (strict, `noPropertyAccessFromIndexSignature` → use `process.env["X"]`), `vite.config.ts`, `bunfig.toml`, `bun.lock`, `playwright.config.ts`, `wrangler.jsonc` (shadcn `components.json` removed with ui kit)
-- `rolldown` pinned to 1.2.1 via overrides
+- `index.html` (static head: title/og/fonts/favicon — no SSR head system anymore), `eslint.config.js`, `tsconfig.json` (strict, `noPropertyAccessFromIndexSignature` → use `import.meta.env["X"]`), `vite.config.ts`, `bunfig.toml`, `bun.lock`, `playwright.config.ts`, `wrangler.jsonc` (assets-only: `compatibility_date` **required** by wrangler even with no worker code, `directory: ./dist` + `not_found_handling: single-page-application` — no `main`, no worker code), `public/_redirects` (`/invito / 307`)
 
 ## Config files (`backend/`)
 - `wrangler.jsonc`: `main: src/main.py`, `python_workers` + `python_dedicated_snapshot` flags, vars (SPREADSHEET_ID, SHEET_RANGE, ALLOWED_ORIGIN — last one dead, CORS hardcoded in main.py), observability enabled

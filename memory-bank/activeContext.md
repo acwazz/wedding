@@ -1,8 +1,24 @@
 # Active Context
 
-> Last updated: 2026-09-16
+> Last updated: 2026-09-17
 
 ## Current state
+- **Website migrated React → SolidJS + lefthook pre-commit added (2026-09-17,
+  session 7)**: TanStack Start/React SSR → **SolidJS 1.9 SPA**, client-rendered
+  and served as **Workers static assets** (assets-only `wrangler.jsonc` +
+  `public/_redirects` `/invito` → 307; client fallback in `entry.tsx`).
+  SSR worker bundle 983 KiB → **19 KiB gzip** static JS. ALL React deps removed
+  (react, react-dom, @tanstack/*, @types/react*, @vitejs/plugin-react,
+  eslint-plugin-react-hooks/-refresh, @cloudflare/vite-plugin, vaul, rolldown
+  override); added solid-js, lucide-solid (deep imports only), vite-plugin-solid.
+  Root **lefthook** pre-commit, glob-gated per component: website→typecheck+lint,
+  backend→pytest, infra→uv lock+py_compile. Post-migration fixes found by
+  dry-run: missing `compatibility_date` in wrangler.jsonc (CI deploy would have
+  failed) + stale `.wrangler/deploy/config.json` SSR redirect (deleted, local
+  cache). Full suite green: typecheck+lint, build, e2e 14/14 (specs unchanged,
+  framework-agnostic), pytest 13/13, infra check, `lefthook run pre-commit
+  --all-files` 3/3. **Not yet deployed** — release = tag `website-0.4.0` (or
+  similar) once reviewed.
 **ALL THREE PIPELINES GREEN (2026-09-16)** — workers + infra deployed live:
 `infra-0.1.1`, `backend-0.1.1`, `website-0.1.0` tags all `completed success`.
 
@@ -67,7 +83,7 @@
 ## Repo layout
 ```
 /               → AGENTS.md, README.md, justfile, memory-bank/, website/, backend/
-website/        → landing page: src/, e2e/, configs, own justfile + wrangler.jsonc
+website/        → SolidJS SPA landing page: src/, e2e/, configs, own justfile + wrangler.jsonc
 backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.toml, wrangler.jsonc
 ```
 
@@ -94,8 +110,12 @@ backend/        → CF Python Worker: src/main.py, tests/ (pytest), pyproject.to
   that's what playground sends; slash variant optional extra).
 - No `.dev.vars` → live Google Sheets round-trip untested; e2e covers the
   website↔backend POST contract via mocks, unit tests cover Google auth+append flow.
-- Unused deps removed (react-hook-form, zod, shadcn ui kit, sonner, React Query all
-  gone from package.json; lucide-react kept, used in index.tsx).
+- ~~Unused deps removed (react-hook-form, zod, shadcn ui kit, sonner, React Query)~~
+  superseded by the SolidJS migration: **ALL React/TanStack deps gone** from
+  website/package.json (react, react-dom, @tanstack/*, @types/react*,
+  @vitejs/plugin-react, eslint-plugin-react-hooks/-refresh,
+  @cloudflare/vite-plugin, vaul, rolldown override); icons now lucide-solid
+  deep imports.
 - `ALLOWED_ORIGIN` var in backend wrangler.jsonc is dead — CORS hardcoded
   `allow_origins=["*"]` in main.py. Wire it or delete var.
 - API behavior change (accepted): bare OPTIONS (non-preflight) now 405 (starlette)
